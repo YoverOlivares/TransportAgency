@@ -1,2 +1,89 @@
-﻿<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
-<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+﻿<!-- jQuery Validation -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/additional-methods.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+
+<!-- Custom Validation Messages in Spanish -->
+<script>
+    $(document).ready(function () {
+        // Configurar mensajes de validación en español
+        jQuery.extend(jQuery.validator.messages, {
+            required: "Este campo es obligatorio.",
+            remote: "Por favor, corrige este campo.",
+            email: "Por favor, introduce una dirección de correo válida.",
+            url: "Por favor, introduce una URL válida.",
+            date: "Por favor, introduce una fecha válida.",
+            dateISO: "Por favor, introduce una fecha válida (ISO).",
+            number: "Por favor, introduce un número válido.",
+            digits: "Por favor, introduce solo dígitos.",
+            creditcard: "Por favor, introduce un número de tarjeta válido.",
+            equalTo: "Por favor, introduce el mismo valor de nuevo.",
+            maxlength: jQuery.validator.format("Por favor, no introduzcas más de {0} caracteres."),
+            minlength: jQuery.validator.format("Por favor, no introduzcas menos de {0} caracteres."),
+            rangelength: jQuery.validator.format("Por favor, introduce un valor entre {0} y {1} caracteres."),
+            range: jQuery.validator.format("Por favor, introduce un valor entre {0} y {1}."),
+            max: jQuery.validator.format("Por favor, introduce un valor menor o igual a {0}."),
+            min: jQuery.validator.format("Por favor, introduce un valor mayor o igual a {0}."),
+            step: jQuery.validator.format("Por favor, introduce un múltiplo de {0}.")
+        });
+
+        // Personalizar estilos de validación
+        $.validator.setDefaults({
+            highlight: function (element) {
+                $(element).addClass('is-invalid').removeClass('is-valid');
+            },
+            unhighlight: function (element) {
+                $(element).addClass('is-valid').removeClass('is-invalid');
+            },
+            errorElement: 'div',
+            errorClass: 'invalid-feedback',
+            errorPlacement: function (error, element) {
+                if (element.parent('.input-group').length) {
+                    error.insertAfter(element.parent());
+                } else {
+                    error.insertAfter(element);
+                }
+            }
+        });
+
+        // Validación personalizada para números de documento peruanos
+        $.validator.addMethod("peruvianDocument", function (value, element) {
+            // DNI: 8 dígitos
+            // CE: 9 dígitos alfanuméricos
+            if (!value) return true; // Opcional si no es required
+            return /^[0-9]{8}$/.test(value) || /^[A-Z0-9]{9}$/.test(value);
+        }, "Ingrese un número de documento válido (DNI: 8 dígitos)");
+
+        // Validación para teléfonos peruanos
+        $.validator.addMethod("peruvianPhone", function (value, element) {
+            if (!value) return true; // Opcional si no es required
+            return /^(\+51|51)?[9][0-9]{8}$/.test(value.replace(/[\s\-]/g, ''));
+        }, "Ingrese un número de teléfono válido (+51 9XXXXXXXX)");
+
+        // Aplicar validaciones personalizadas
+        $('input[name="DocumentNumber"]').each(function() {
+            $(this).rules('add', {
+                peruvianDocument: true
+            });
+        });
+
+        $('input[name="Phone"]').each(function() {
+            $(this).rules('add', {
+                peruvianPhone: true
+            });
+        });
+
+        // Validación en tiempo real para mejor UX
+        $('input').on('blur', function() {
+            $(this).valid();
+        });
+
+        // Limpiar validación al escribir
+        $('input').on('input', function() {
+            if ($(this).hasClass('is-invalid')) {
+                $(this).removeClass('is-invalid');
+                $(this).next('.invalid-feedback').remove();
+            }
+        });
+    });
+</script>

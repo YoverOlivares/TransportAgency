@@ -1,8 +1,388 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<!-- Page Header -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="h2 text-primary-custom mb-1">
+                    <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                </h1>
+                <p class="text-muted mb-0">@Model.WelcomeMessage</p>
+            </div>
+            <div class="text-end">
+                <a href="@Url.Action("Index", "Trip")" class="btn btn-primary me-2">
+                    <i class="fas fa-plus me-1"></i>Ver Viajes
+                </a>
+                <a href="@Url.Action("Index", "Sale")" class="btn btn-outline-secondary">
+                    <i class="fas fa-chart-line me-1"></i>Ver Ventas
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-md-4 mb-3">
+        <div class="card bg-primary-custom text-white h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title mb-1 text-white-50">Viajes de Hoy</h6>
+                        <h2 class="mb-0 fw-bold">@Model.TotalTripsToday</h2>
+                    </div>
+                    <div class="text-white-50">
+                        <i class="fas fa-bus fa-2x"></i>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <small class="text-white-50">
+                        <i class="fas fa-calendar me-1"></i>@Model.CurrentDate.ToString("dd/MM/yyyy")
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-3">
+        <div class="card bg-secondary-custom text-white h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title mb-1 text-white-50">Ventas de Hoy</h6>
+                        <h2 class="mb-0 fw-bold">@Model.TotalSalesToday</h2>
+                    </div>
+                    <div class="text-white-50">
+                        <i class="fas fa-ticket-alt fa-2x"></i>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <small class="text-white-50">
+                        <i class="fas fa-clock me-1"></i>Actualizado ahora
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-3">
+        <div class="card bg-success text-white h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title mb-1 text-white-50">Ingresos de Hoy</h6>
+                        <h2 class="mb-0 fw-bold">@Model.TotalRevenueFormatted</h2>
+                    </div>
+                    <div class="text-white-50">
+                        <i class="fas fa-dollar-sign fa-2x"></i>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <small class="text-white-50">
+                        <i class="fas fa-chart-line me-1"></i>En tiempo real
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title mb-3">
+                    <i class="fas fa-bolt me-2 text-warning"></i>Acciones Rápidas
+                </h5>
+                <div class="row">
+                    <div class="col-md-3 mb-2">
+                        <a href="@Url.Action("Index", "Trip")" class="btn btn-outline-primary w-100">
+                            <i class="fas fa-search me-2"></i>Buscar Viajes
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="@Url.Action("Index", "Sale")" class="btn btn-outline-success w-100">
+                            <i class="fas fa-plus me-2"></i>Nueva Venta
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <button type="button" class="btn btn-outline-info w-100" onclick="window.print()">
+                            <i class="fas fa-print me-2"></i>Imprimir Reporte
+                        </button>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="#" class="btn btn-outline-secondary w-100">
+                            <i class="fas fa-cog me-2"></i>Configuración
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content Row -->
+<div class="row">
+    <!-- Upcoming Trips -->
+    <div class="col-lg-7 mb-4">
+        <div class="card h-100">
+            <div class="card-header bg-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-clock me-2 text-primary-custom"></i>Próximos Viajes
+                    </h5>
+                    <a href="@Url.Action("Index", "Trip")" class="btn btn-sm btn-outline-primary">
+                        Ver Todos <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                @if (Model.HasUpcomingTrips)
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Ruta</th>
+                                    <th>Salida</th>
+                                    <th>Bus</th>
+                                    <th>Disponibles</th>
+                                    <th>Precio</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var trip in Model.UpcomingTrips)
+                                {
+                                    <tr>
+                                        <td>
+                                            <strong class="text-dark">@trip.RouteInfo</strong>
+                                            <br>
+                                            <small class="text-muted">@trip.DurationFormatted</small>
+                                        </td>
+                                        <td>
+                                            <span class="fw-semibold">@trip.DepartureTimeFormatted</span>
+                                            @if (trip.IsDepartureSoon)
+                                            {
+                                                <br>
+
+                                                <span class="badge bg-warning text-dark">Próximo</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <small class="text-muted">@trip.BusInfo</small>
+                                        </td>
+                                        <td>
+                                            <span class="@trip.AvailabilityClass fw-semibold">
+                                                @trip.AvailableSeats/@trip.TotalSeats
+                                            </span>
+                                            <br>
+                                            <div class="progress" style="height: 4px;">
+                                                <div class="progress-bar @(trip.HasAvailableSeats ? "bg-success" : "bg-danger")"
+                                                     style="width: @(trip.PercentageOccupied)%"></div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="fw-semibold text-success">@trip.PriceFormatted</span>
+                                        </td>
+                                        <td>
+                                            <a href="@Url.Action("Details", "Trip", new { id = trip.Id })"
+                                               class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-4">
+                        <i class="fas fa-calendar-times fa-2x text-muted mb-2"></i>
+                        <p class="text-muted mb-0">No hay viajes próximos programados</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Sales -->
+    <div class="col-lg-5 mb-4">
+        <div class="card h-100">
+            <div class="card-header bg-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-receipt me-2 text-secondary-custom"></i>Ventas Recientes
+                    </h5>
+                    <a href="@Url.Action("Index", "Sale")" class="btn btn-sm btn-outline-success">
+                        Ver Todas <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                @if (Model.HasRecentSales)
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Cliente</th>
+                                    <th>Asiento</th>
+                                    <th>Monto</th>
+                                    <th>Hora</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var sale in Model.RecentSales)
+                                {
+                                    <tr>
+                                        <td>
+                                            <strong class="text-dark">@sale.CustomerName</strong>
+                                            <br>
+                                            <small class="text-muted">@sale.DocumentNumber</small>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-primary">@sale.SeatNumber</span>
+                                        </td>
+                                        <td>
+                                            <span class="fw-semibold text-success">@sale.AmountFormatted</span>
+                                        </td>
+                                        <td>
+                                            <small class="text-muted">@sale.SaleTimeFormatted</small>
+                                            @if (sale.IsRecentSale)
+                                            {
+                                                <br>
+
+                                                <span class="badge bg-info">Nuevo</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-4">
+                        <i class="fas fa-receipt fa-2x text-muted mb-2"></i>
+                        <p class="text-muted mb-0">No hay ventas recientes</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Section -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-chart-bar me-2 text-info"></i>Estadísticas del Día
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <canvas id="tripsChart" width="400" height="200"></canvas>
+                    </div>
+                    <div class="col-md-6">
+                        <canvas id="salesChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        // Configuración de colores
+        const colors = {
+            primary: '#1e40af',
+            secondary: '#059669',
+            success: '#10b981',
+            warning: '#f59e0b',
+            danger: '#ef4444'
+        };
+
+        // Gráfico de Viajes
+        const tripsCtx = document.getElementById('tripsChart').getContext('2d');
+        const tripsChart = new Chart(tripsCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Viajes Activos', 'Asientos Ocupados', 'Asientos Disponibles'],
+                datasets: [{
+                    data: [@Model.TotalTripsToday, @(Model.UpcomingTrips.Sum(t => t.OccupiedSeats)), @(Model.UpcomingTrips.Sum(t => t.AvailableSeats))],
+                    backgroundColor: [colors.primary, colors.warning, colors.success],
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Distribución de Viajes y Asientos'
+                    },
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        // Gráfico de Ventas
+        const salesCtx = document.getElementById('salesChart').getContext('2d');
+        const salesChart = new Chart(salesCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Ventas Hoy', 'Ingresos (S/)', 'Promedio por Venta'],
+                datasets: [{
+                    label: 'Estadísticas',
+                    data: [@Model.TotalSalesToday, @Model.TotalRevenue, @(Model.TotalSalesToday > 0 ? Model.TotalRevenue / Model.TotalSalesToday : 0)],
+                    backgroundColor: [colors.secondary, colors.success, colors.primary],
+                    borderColor: [colors.secondary, colors.success, colors.primary],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Resumen de Ventas del Día'
+                    },
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Auto-refresh cada 5 minutos
+        setTimeout(function() {
+            location.reload();
+        }, 300000);
+    </script>
+}

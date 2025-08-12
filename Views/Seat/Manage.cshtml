@@ -1,5 +1,382 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model List<SeatViewModel>
 @{
+    ViewData["Title"] = "Gestionar Asientos";
+    var tripId = ViewBag.TripId as int? ?? 0;
+    var tripInfo = ViewBag.TripInfo as TripDto;
+}
+
+<!-- Breadcrumb -->
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Inicio</a></li>
+        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Trip")">Viajes</a></li>
+        <li class="breadcrumb-item"><a href="@Url.Action("Index", new { tripId = tripId })">Asientos</a></li>
+        <li class="breadcrumb-item active">Gestionar</li>
+    </ol>
+</nav>
+
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2>Gestionar Asientos</h2>
+        @if (tripInfo != null)
+        {
+            <p class="text-muted">@tripInfo.RouteInfo - @tripInfo.DepartureTime.ToString("dd/MM/yyyy HH:mm")</p>
+        }
+    </div>
+    <div>
+        <a href="@Url.Action("Index", new { tripId = tripId })" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i>Volver
+        </a>
+    </div>
+</div>
+
+<!-- Management Options -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-plus me-2"></i>Generar Asientos</h5>
+            </div>
+            <div class="card-body">
+                @if (!Model.Any())
+                {
+                    <p>Este viaje no tiene asientos configurados. Genere los asientos automáticamente.</p>
+                    @if (tripInfo != null)
+                    {
+                        <form id="generateSeatsForm" method="post" asp-action="GenerateSeats">
+                            <input type="hidden" name="tripId" value="@tripId" />
+                            <input type="hidden" name="capacity" value="@tripInfo.BusCapacity" />
+
+                            <div class="mb-3">
+                                <label class="form-label">Capacidad del Bus</label>
+                                <input type="number" class="form-control" value="@tripInfo.BusCapacity" readonly />
+                            </div>
+
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-magic me-2"></i>Generar @tripInfo.BusCapacity Asientos
+                            </button>
+                        </form>
+                    }
+                }
+                else
+                {
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Los asientos ya están generados para este viaje.
+                        <strong>Total: @Model.Count asientos</strong>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-tools me-2"></i>Acciones Rápidas</h5>
+            </div>
+            <div class="card-body">
+                @if (Model.Any())
+                {
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-warning" onclick="liberarTodosAsientos()">
+                            <i class="fas fa-unlock me-2"></i>Liberar Todos los Asientos
+                        </button>
+                        <button class="btn btn-danger" onclick="ocuparTodosAsientos()">
+                            <i class="fas fa-lock me-2"></i>Marcar Todos como Ocupados
+                        </button>
+                        <button class="btn btn-info" onclick="exportarAsientos()">
+                            <i class="fas fa-download me-2"></i>Exportar Lista
+                        </button>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted">No hay asientos para gestionar. Genere los asientos primero.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Seats Management -->
+@if (Model.Any())
+{
+    <!-- Current Status -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5>Estado Actual</h5>
+        </div>
+        <div class="card-body">
+            <div class="row text-center">
+                <div class="col-md-3">
+                    <div class="bg-success text-white rounded p-3">
+                        <h3>@Model.Count(s => !s.IsOccupied)</h3>
+                        <p class="mb-0">Disponibles</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="bg-danger text-white rounded p-3">
+                        <h3>@Model.Count(s => s.IsOccupied)</h3>
+                        <p class="mb-0">Ocupados</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="bg-primary text-white rounded p-3">
+                        <h3>@Model.Count</h3>
+                        <p class="mb-0">Total</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="bg-warning text-dark rounded p-3">
+                        <h3>@((double)Model.Count(s => s.IsOccupied) / Model.Count * 100).ToString("F1")%</h3>
+                        <p class="mb-0">Ocupación</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Interactive Seat Map -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5>Mapa Interactivo</h5>
+            <small>Haga clic en los asientos para cambiar su estado</small>
+        </div>
+        <div class="card-body">
+            <!-- Driver Area -->
+            <div class="text-center mb-3">
+                <div class="badge bg-secondary">Conductor</div>
+            </div>
+
+            <!-- Seats Grid -->
+            <div class="row justify-content-center" id="seatsGrid">
+                @{
+                    var orderedSeats = Model.OrderBy(s => s.SeatNumber).ToList();
+                }
+
+                @for (int row = 0; row < Math.Ceiling((double)orderedSeats.Count / 4); row++)
+                {
+                    <div class="row justify-content-center mb-2">
+                        @for (int col = 0; col < 4; col++)
+                        {
+                            var seatIndex = row * 4 + col;
+                            if (seatIndex < orderedSeats.Count)
+                            {
+                                var seat = orderedSeats[seatIndex];
+                                <div class="col-auto @(col == 2 ? "ms-4" : "")">
+                                    <button type="button"
+                                            class="btn @(seat.IsOccupied ? "btn-danger" : "btn-success") btn-sm seat-toggle"
+                                            data-seat-id="@seat.Id"
+                                            data-seat-number="@seat.SeatNumber"
+                                            data-is-occupied="@seat.IsOccupied.ToString().ToLower()"
+                                            style="width: 50px; height: 40px; margin: 2px;"
+                                            onclick="toggleSeat(this)">
+                                        @seat.SeatNumber
+                                    </button>
+                                </div>
+                            }
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Seats Table -->
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5>Lista Detallada</h5>
+                <div>
+                    <input type="text" class="form-control form-control-sm" id="searchSeats"
+                           placeholder="Buscar asiento..." style="width: 200px;">
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0" id="seatsTable">
+                    <thead class="table-light">
+                        <tr>
+                            <th>
+                                <input type="checkbox" id="selectAll" class="form-check-input">
+                            </th>
+                            <th>Asiento</th>
+                            <th>Estado</th>
+                            <th>Precio</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var seat in Model.OrderBy(s => s.SeatNumber))
+                        {
+                            <tr data-seat-number="@seat.SeatNumber">
+                                <td>
+                                    <input type="checkbox" class="form-check-input seat-checkbox" value="@seat.Id">
+                                </td>
+                                <td><strong>@seat.SeatNumber</strong></td>
+                                <td>
+                                    <span class="badge @(seat.IsOccupied ? "bg-danger" : "bg-success")" id="status-@seat.Id">
+                                        @(seat.IsOccupied ? "Ocupado" : "Disponible")
+                                    </span>
+                                </td>
+                                <td>S/ @seat.Price.ToString("F2")</td>
+                                <td>
+                                    <button class="btn btn-sm @(seat.IsOccupied ? "btn-outline-success" : "btn-outline-danger")"
+                                            onclick="toggleSeatById(@seat.Id)">
+                                        @if (seat.IsOccupied)
+                                        {
+                                            <i class="fas fa-unlock"></i>
+
+                                            <span> Liberar</span>
+                                        }
+                                        else
+                                        {
+                                            <i class="fas fa-lock"></i>
+
+                                            <span> Ocupar</span>
+                                        }
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bulk Actions -->
+    <div class="card mt-3">
+        <div class="card-body">
+            <h6>Acciones en Lote</h6>
+            <div class="btn-group" role="group">
+                <button class="btn btn-outline-success" onclick="bulkAction('liberar')">
+                    <i class="fas fa-unlock me-1"></i>Liberar Seleccionados
+                </button>
+                <button class="btn btn-outline-danger" onclick="bulkAction('ocupar')">
+                    <i class="fas fa-lock me-1"></i>Ocupar Seleccionados
+                </button>
+            </div>
+            <span id="selectedCount" class="ms-3 text-muted">0 asientos seleccionados</span>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Search functionality
+            $('#searchSeats').on('keyup', function() {
+                var value = $(this).val().toLowerCase();
+                $('#seatsTable tbody tr').filter(function() {
+                    $(this).toggle($(this).data('seat-number').toString().indexOf(value) > -1);
+                });
+            });
+
+            // Select all functionality
+            $('#selectAll').change(function() {
+                $('.seat-checkbox').prop('checked', this.checked);
+                updateSelectedCount();
+            });
+
+            $('.seat-checkbox').change(function() {
+                updateSelectedCount();
+            });
+
+            updateSelectedCount();
+        });
+
+        function toggleSeat(element) {
+            var seatId = $(element).data('seat-id');
+            var isOccupied = $(element).data('is-occupied');
+
+            // Toggle visual state immediately
+            if (isOccupied) {
+                $(element).removeClass('btn-danger').addClass('btn-success');
+                $(element).data('is-occupied', false);
+            } else {
+                $(element).removeClass('btn-success').addClass('btn-danger');
+                $(element).data('is-occupied', true);
+            }
+
+            // Update table status
+            updateTableStatus(seatId, !isOccupied);
+
+            // Here you would make an AJAX call to update the server
+            console.log('Toggle seat', seatId, 'to', !isOccupied ? 'occupied' : 'available');
+        }
+
+        function toggleSeatById(seatId) {
+            var button = $(`button[data-seat-id="${seatId}"]`);
+            toggleSeat(button[0]);
+        }
+
+        function updateTableStatus(seatId, isOccupied) {
+            var statusElement = $(`#status-${seatId}`);
+            if (isOccupied) {
+                statusElement.removeClass('bg-success').addClass('bg-danger').text('Ocupado');
+            } else {
+                statusElement.removeClass('bg-danger').addClass('bg-success').text('Disponible');
+            }
+        }
+
+        function updateSelectedCount() {
+            var count = $('.seat-checkbox:checked').length;
+            $('#selectedCount').text(count + ' asientos seleccionados');
+        }
+
+        function bulkAction(action) {
+            var selectedSeats = $('.seat-checkbox:checked');
+            if (selectedSeats.length === 0) {
+                alert('Seleccione al menos un asiento');
+                return;
+            }
+
+            var message = action === 'liberar' ?
+                `¿Liberar ${selectedSeats.length} asientos seleccionados?` :
+                `¿Ocupar ${selectedSeats.length} asientos seleccionados?`;
+
+            if (confirm(message)) {
+                selectedSeats.each(function() {
+                    var seatId = $(this).val();
+                    var button = $(`button[data-seat-id="${seatId}"]`);
+
+                    if (action === 'liberar') {
+                        button.removeClass('btn-danger').addClass('btn-success').data('is-occupied', false);
+                        updateTableStatus(seatId, false);
+                    } else {
+                        button.removeClass('btn-success').addClass('btn-danger').data('is-occupied', true);
+                        updateTableStatus(seatId, true);
+                    }
+                });
+
+                // Uncheck all
+                $('.seat-checkbox').prop('checked', false);
+                $('#selectAll').prop('checked', false);
+                updateSelectedCount();
+            }
+        }
+
+        function liberarTodosAsientos() {
+            if (confirm('¿Liberar todos los asientos?')) {
+                $('.seat-toggle').removeClass('btn-danger').addClass('btn-success').data('is-occupied', false);
+                $('.badge').removeClass('bg-danger').addClass('bg-success').text('Disponible');
+            }
+        }
+
+        function ocuparTodosAsientos() {
+            if (confirm('¿Marcar todos los asientos como ocupados?')) {
+                $('.seat-toggle').removeClass('btn-success').addClass('btn-danger').data('is-occupied', true);
+                $('.badge').removeClass('bg-success').addClass('bg-danger').text('Ocupado');
+            }
+        }
+
+        function exportarAsientos() {
+            // Simulate export functionality
+            alert('Funcionalidad de exportación en desarrollo');
+        }
+    </script>
 }

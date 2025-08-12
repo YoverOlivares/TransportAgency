@@ -1,6 +1,233 @@
 ﻿@{
-    ViewData["Title"] = "Privacy Policy";
+    ViewData["Title"] = "Política de Privacidad";
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <!-- Page Header -->
+        <div class="text-center mb-5">
+            <h1 class="h2 text-primary-custom mb-3">
+                <i class="fas fa-shield-alt me-2"></i>Política de Privacidad
+            </h1>
+            <p class="lead text-muted">
+                En TransportAgency, protegemos tu información personal y respetamos tu privacidad.
+            </p>
+            <p class="text-muted">
+                <small>Última actualización: @DateTime.Now.ToString("dd de MMMM de yyyy")</small>
+            </p>
+        </div>
+
+        <!-- Content Cards -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h4 class="text-primary-custom mb-3">
+                            <i class="fas fa-info-circle me-2"></i>1. Información que Recopilamos
+                        </h4>
+                        <p>Recopilamos la siguiente información cuando utilizas nuestros servicios:</p>
+                        <ul class="list-unstyled ps-3">
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i><strong>Información Personal:</strong> Nombre completo, número de documento, teléfono y correo electrónico.</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i><strong>Información de Viaje:</strong> Origen, destino, fecha y hora de viaje, asiento seleccionado.</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i><strong>Información de Pago:</strong> Detalles necesarios para procesar tu compra de boletos.</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i><strong>Información Técnica:</strong> Dirección IP, tipo de navegador, sistema operativo para mejorar nuestros servicios.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h4 class="text-primary-custom mb-3">
+                            <i class="fas fa-cogs me-2"></i>2. Cómo Utilizamos tu Información
+                        </h4>
+                        <p>Utilizamos tu información personal para:</p>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <ul class="list-unstyled ps-3">
+                                    <li class="mb-2"><i class="fas fa-arrow-right text-primary me-2"></i>Procesar tus reservas y ventas de boletos</li>
+                                    <li class="mb-2"><i class="fas fa-arrow-right text-primary me-2"></i>Generar comprobantes de pago</li>
+                                    <li class="mb-2"><i class="fas fa-arrow-right text-primary me-2"></i>Comunicarnos contigo sobre tu viaje</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <ul class="list-unstyled ps-3">
+                                    <li class="mb-2"><i class="fas fa-arrow-right text-primary me-2"></i>Mejorar nuestros servicios</li>
+                                    <li class="mb-2"><i class="fas fa-arrow-right text-primary me-2"></i>Cumplir con obligaciones legales</li>
+                                    <li class="mb-2"><i class="fas fa-arrow-right text-primary me-2"></i>Enviar información relevante (opcional)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h4 class="text-primary-custom mb-3">
+                            <i class="fas fa-lock me-2"></i>3. Protección de Datos
+                        </h4>
+                        <p>Implementamos medidas de seguridad para proteger tu información:</p>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <div class="text-center p-3 bg-light rounded">
+                                    <i class="fas fa-encrypt fa-2x text-secondary-custom mb-2"></i>
+                                    <h6>Encriptación</h6>
+                                    <small class="text-muted">Datos encriptados en tránsito y almacenamiento</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="text-center p-3 bg-light rounded">
+                                    <i class="fas fa-server fa-2x text-secondary-custom mb-2"></i>
+                                    <h6>Servidores Seguros</h6>
+                                    <small class="text-muted">Infraestructura protegida y monitoreada 24/7</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="text-center p-3 bg-light rounded">
+                                    <i class="fas fa-user-shield fa-2x text-secondary-custom mb-2"></i>
+                                    <h6>Acceso Restringido</h6>
+                                    <small class="text-muted">Solo personal autorizado accede a los datos</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h4 class="text-primary-custom mb-3">
+                            <i class="fas fa-user-check me-2"></i>4. Tus Derechos
+                        </h4>
+                        <p>Como usuario, tienes los siguientes derechos sobre tu información personal:</p>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-start mb-3">
+                                    <div class="bg-primary-custom text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                        <i class="fas fa-eye"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">Acceso</h6>
+                                        <small class="text-muted">Solicitar una copia de tu información personal</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-start mb-3">
+                                    <div class="bg-secondary-custom text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                        <i class="fas fa-edit"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">Rectificación</h6>
+                                        <small class="text-muted">Corregir información inexacta o incompleta</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-start mb-3">
+                                    <div class="bg-warning text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                        <i class="fas fa-trash"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">Eliminación</h6>
+                                        <small class="text-muted">Solicitar la eliminación de tus datos personales</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-start mb-3">
+                                    <div class="bg-info text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                        <i class="fas fa-ban"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">Oposición</h6>
+                                        <small class="text-muted">Oponerte al procesamiento de tus datos</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h4 class="text-primary-custom mb-3">
+                            <i class="fas fa-cookie-bite me-2"></i>5. Cookies y Tecnologías Similares
+                        </h4>
+                        <p>Utilizamos cookies para mejorar tu experiencia de navegación:</p>
+                        <div class="alert alert-info" role="alert">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Cookies Esenciales:</strong> Necesarias para el funcionamiento básico del sitio web.
+                        </div>
+                        <div class="alert alert-warning" role="alert">
+                            <i class="fas fa-chart-line me-2"></i>
+                            <strong>Cookies de Análisis:</strong> Nos ayudan a entender cómo utilizas nuestro sitio web.
+                        </div>
+                        <p class="mb-0">Puedes configurar tu navegador para rechazar cookies, pero esto puede afectar la funcionalidad del sitio.</p>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h4 class="text-primary-custom mb-3">
+                            <i class="fas fa-phone me-2"></i>6. Contacto
+                        </h4>
+                        <p>Si tienes preguntas sobre esta política de privacidad o deseas ejercer tus derechos, contáctanos:</p>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <div class="text-center">
+                                    <i class="fas fa-envelope fa-2x text-primary-custom mb-2"></i>
+                                    <h6>Correo Electrónico</h6>
+                                    <a href="mailto:privacidad@transportagency.com" class="text-decoration-none">
+                                        privacidad@transportagency.com
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="text-center">
+                                    <i class="fas fa-phone fa-2x text-primary-custom mb-2"></i>
+                                    <h6>Teléfono</h6>
+                                    <a href="tel:+51123456789" class="text-decoration-none">
+                                        +51 123 456 789
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="text-center">
+                                    <i class="fas fa-map-marker-alt fa-2x text-primary-custom mb-2"></i>
+                                    <h6>Dirección</h6>
+                                    <p class="mb-0 small">
+                                        Av. Principal 123<br>
+                                        Lima, Perú
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="text-center mb-5">
+                    <a href="@Url.Action("Index")" class="btn btn-primary me-3">
+                        <i class="fas fa-arrow-left me-2"></i>Volver al Inicio
+                    </a>
+                    <button onclick="window.print()" class="btn btn-outline-secondary">
+                        <i class="fas fa-print me-2"></i>Imprimir Política
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Smooth scroll para navegación interna
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+}

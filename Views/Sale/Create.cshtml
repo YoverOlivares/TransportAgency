@@ -1,5 +1,158 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model CreateSaleViewModel
 @{
+    ViewData["Title"] = "Completar Compra";
+}
+
+<!-- Breadcrumb -->
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Inicio</a></li>
+        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Trip")">Viajes</a></li>
+        <li class="breadcrumb-item active">Completar Compra</li>
+    </ol>
+</nav>
+
+<div class="row">
+    <!-- Customer Form -->
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-user me-2"></i>Datos del Pasajero</h5>
+            </div>
+            <div class="card-body">
+                <form asp-action="Create" method="post" id="saleForm">
+                    <input type="hidden" asp-for="SeatId" />
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="FullName" class="form-label"></label>
+                            <input asp-for="FullName" class="form-control" placeholder="Nombre completo del pasajero" />
+                            <span asp-validation-for="FullName" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="DocumentNumber" class="form-label"></label>
+                            <input asp-for="DocumentNumber" class="form-control" placeholder="DNI o Carnet de Extranjería" />
+                            <span asp-validation-for="DocumentNumber" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Phone" class="form-label"></label>
+                            <input asp-for="Phone" class="form-control" placeholder="+51 999 999 999 (opcional)" />
+                            <span asp-validation-for="Phone" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Email" class="form-label"></label>
+                            <input asp-for="Email" class="form-control" placeholder="correo@ejemplo.com (opcional)" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="@Url.Action("Details", "Trip", new { id = Model.SelectedSeatViewModel?.TripId })"
+                           class="btn btn-outline-secondary me-md-2">
+                            <i class="fas fa-arrow-left me-2"></i>Volver
+                        </a>
+                        <button type="submit" class="btn btn-success btn-lg" id="confirmPurchaseBtn">
+                            <i class="fas fa-credit-card me-2"></i>Confirmar Compra
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Purchase Summary -->
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-shopping-cart me-2"></i>Resumen de Compra</h5>
+            </div>
+            <div class="card-body">
+                @if (Model.SelectedSeatViewModel != null)
+                {
+                    <div class="mb-3">
+                        <h6 class="text-primary">Información del Viaje</h6>
+                        <p class="mb-1"><strong>Ruta:</strong> @Model.TripInfo</p>
+                        <p class="mb-1">
+                            <strong>Asiento:</strong>
+                            <span class="badge bg-primary fs-6">@Model.SeatNumber</span>
+                        </p>
+                    </div>
+
+                    <hr>
+
+                    <div class="mb-3">
+                        <h6 class="text-success">Detalles del Pago</h6>
+                        <div class="d-flex justify-content-between">
+                            <span>Precio del asiento:</span>
+                            <strong class="text-success">@Model.AmountFormatted</strong>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="text-center">
+                        <h4 class="text-success mb-3">
+                            Total: @Model.AmountFormatted
+                        </h4>
+                        <small class="text-muted">
+                            Al confirmar la compra, se emitirá el boleto electrónico
+                        </small>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center text-muted">
+                        <i class="fas fa-exclamation-triangle fa-2x mb-2"></i>
+                        <p>No se encontró información del asiento seleccionado</p>
+                        <a href="@Url.Action("Index", "Trip")" class="btn btn-primary">
+                            Seleccionar Asiento
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Security Info -->
+        <div class="card mt-3">
+            <div class="card-body">
+                <h6><i class="fas fa-shield-alt me-2 text-success"></i>Información Segura</h6>
+                <small class="text-muted">
+                    Tus datos están protegidos y se utilizan únicamente para la emisión del boleto.
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <script>
+        $(document).ready(function() {
+            // Real-time validation feedback
+            $('input').on('blur', function() {
+                $(this).valid();
+            });
+
+            // Form submission
+            $('#saleForm').on('submit', function(e) {
+                if (!$(this).valid()) {
+                    e.preventDefault();
+                    return false;
+                }
+
+                // Disable submit button to prevent double submission
+                $('#confirmPurchaseBtn').prop('disabled', true)
+                    .html('<i class="fas fa-spinner fa-spin me-2"></i>Procesando...');
+            });
+
+            // Auto-focus on first input
+            $('input[type="text"]:first').focus();
+        });
+    </script>
 }
