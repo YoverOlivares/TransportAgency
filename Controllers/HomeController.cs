@@ -1,91 +1,92 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using TransportAgency.Business.Interfaces;
 using TransportAgency.Models;
 using TransportAgency.Models.ViewModels;
+using TransportAgency.Business.Interfaces;
+using System.Diagnostics;
 
 namespace TransportAgency.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly ITripService _tripService;
-        private readonly ISaleService _saleService;
+        private readonly ITripService? _tripService;
+        private readonly ISaleService? _saleService;
 
-        public HomeController(
-            ILogger<HomeController> logger,
-            ITripService tripService,
-            ISaleService saleService)
+        public HomeController(ILogger<HomeController> logger, ITripService? tripService = null, ISaleService? saleService = null)
         {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _tripService = tripService ?? throw new ArgumentNullException(nameof(tripService));
-            _saleService = saleService ?? throw new ArgumentNullException(nameof(saleService));
+            _logger = logger;
+            _tripService = tripService;
+            _saleService = saleService;
         }
 
         public async Task<IActionResult> Index()
         {
             try
             {
-                var today = DateTime.Today;
-
-                // Obtener estadísticas del día
-                var todayTrips = await _tripService.GetTodayTripsAsync();
-                var todaySales = await _saleService.GetSalesByDateAsync(today);
-                var totalRevenue = await _saleService.GetTotalRevenueByDateAsync(today);
-                var upcomingTrips = await _tripService.GetUpcomingTripsAsync(5);
-                var recentSales = await _saleService.GetRecentSalesAsync(10);
-
-                // Mapear a ViewModels
-                var upcomingTripViewModels = upcomingTrips.Select(trip => new TripViewModel
+                var viewModel = new DashboardViewModel
                 {
-                    Id = trip.Id,
-                    BusInfo = trip.BusInfo,
-                    RouteInfo = trip.RouteInfo,
-                    DepartureTime = trip.DepartureTime,
-                    ArrivalTime = trip.ArrivalTime,
-                    Price = trip.Price,
-                    AvailableSeats = trip.AvailableSeats,
-                    TotalSeats = trip.TotalSeats,
-                    IsActive = trip.IsActive
-                }).ToList();
-
-                var recentSaleViewModels = recentSales.Select(sale => new SaleViewModel
-                {
-                    Id = sale.Id,
-                    CustomerName = sale.CustomerName,
-                    DocumentNumber = sale.DocumentNumber,
-                    SeatNumber = sale.SeatNumber,
-                    TripInfo = sale.TripInfo,
-                    Amount = sale.Amount,
-                    SaleDate = sale.SaleDate,
-                    ReceiptNumber = sale.ReceiptNumber
-                }).ToList();
-
-                // Crear ViewModel del dashboard
-                var dashboardViewModel = new DashboardViewModel
-                {
-                    TotalTripsToday = todayTrips.Count(),
-                    TotalSalesToday = todaySales.Count(),
-                    TotalRevenue = totalRevenue,
-                    UpcomingTrips = upcomingTripViewModels,
-                    RecentSales = recentSaleViewModels,
                     CurrentDate = DateTime.Now
                 };
 
-                return View(dashboardViewModel);
+                // Si los servicios están disponibles, obtener datos reales
+                if (_tripService != null)
+                {
+                    var todayTrips = await _tripService.GetTodayTripsAsync();
+                    viewModel.TotalTripsToday = todayTrips.Count();
+
+                    var upcomingTrips = await _tripService.GetUpcomingTripsAsync(5);
+                    viewModel.UpcomingTrips = upcomingTrips.Select(trip => new TripViewModel
+                    {
+                        Id = trip.Id,
+                        BusInfo = trip.BusInfo,
+                        RouteInfo = trip.RouteInfo,
+                        DepartureTime = trip.DepartureTime,
+                        ArrivalTime = trip.ArrivalTime,
+                        Price = trip.Price,
+                        AvailableSeats = trip.AvailableSeats,
+                        TotalSeats = trip.TotalSeats,
+                        IsActive = trip.IsActive
+                    }).ToList();
+                }
+
+                if (_saleService != null)
+                {
+                    var todaySales = await _saleService.GetSalesByDateAsync(DateTime.Today);
+                    viewModel.TotalSalesToday = todaySales.Count();
+                    viewModel.TotalRevenue = await _saleService.GetTotalRevenueByDateAsync(DateTime.Today);
+
+                    var recentSales = await _saleService.GetRecentSalesAsync(5);
+                    viewModel.RecentSales = recentSales.Select(sale => new SaleViewModel
+                    {
+                        Id = sale.Id,
+                        CustomerName = sale.CustomerName,
+                        DocumentNumber = sale.DocumentNumber,
+                        SeatNumber = sale.SeatNumber,
+                        TripInfo = sale.TripInfo,
+                        Amount = sale.Amount,
+                        SaleDate = sale.SaleDate,
+                        ReceiptNumber = sale.ReceiptNumber
+                    }).ToList();
+                }
+
+                return View(viewModel);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error al cargar el dashboard");
-                TempData["ErrorMessage"] = "Error al cargar la información del dashboard.";
 
-                // Retornar dashboard vacío en caso de error
-                var emptyDashboard = new DashboardViewModel
+                // Retornar vista con datos por defecto en caso de error
+                var defaultViewModel = new DashboardViewModel
                 {
-                    CurrentDate = DateTime.Now
+                    CurrentDate = DateTime.Now,
+                    TotalTripsToday = 0,
+                    TotalSalesToday = 0,
+                    TotalRevenue = 0,
+                    UpcomingTrips = new List<TripViewModel>(),
+                    RecentSales = new List<SaleViewModel>()
                 };
 
-                return View(emptyDashboard);
+                return View(defaultViewModel);
             }
         }
 

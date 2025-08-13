@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TransportAgency.Models.Entities;
+using RouteEntity = TransportAgency.Models.Entities.Route;
 
 namespace TransportAgency.Data.Context
 {
@@ -9,12 +10,12 @@ namespace TransportAgency.Data.Context
         {
         }
 
-        public DbSet<Bus> Buses { get; set; }
-        public DbSet<Models.Entities.Route> Routes { get; set; } // ← CAMBIO AQUÍ
-        public DbSet<Trip> Trips { get; set; }
-        public DbSet<Seat> Seats { get; set; }
-        public DbSet<Customer> Customers { get; set; }
-        public DbSet<Sale> Sales { get; set; }
+        public DbSet<Bus> Buses { get; set; } = null!;
+        public DbSet<RouteEntity> Routes { get; set; } = null!;
+        public DbSet<Trip> Trips { get; set; } = null!;
+        public DbSet<Seat> Seats { get; set; } = null!;
+        public DbSet<Customer> Customers { get; set; } = null!;
+        public DbSet<Sale> Sales { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -32,8 +33,8 @@ namespace TransportAgency.Data.Context
                 entity.HasIndex(e => e.PlateNumber).IsUnique();
             });
 
-            // Route Configuration - ← CAMBIO AQUÍ TAMBIÉN
-            modelBuilder.Entity<Models.Entities.Route>(entity =>
+            // Route Configuration - usando RouteEntity para evitar conflicto
+            modelBuilder.Entity<RouteEntity>(entity =>
             {
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Origin).IsRequired().HasMaxLength(100);

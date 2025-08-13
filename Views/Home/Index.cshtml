@@ -3,8 +3,344 @@
     ViewData["Title"] = "Dashboard";
 }
 
+<style>
+    /* ESTILOS TRANSPORTAGENCY - INCLUIDOS EN INDEX */
+    body {
+        background: radial-gradient(125% 125% at 50% 10%, #000000 40%, #0d1a36 100%) !important;
+        color: white !important;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+        min-height: 100vh;
+    }
+
+    :root {
+        --gold: rgb(197, 167, 80);
+        --dark: rgb(20, 20, 20);
+        --brown: rgb(132, 76, 68);
+    }
+
+    .container {
+        position: relative;
+        z-index: 1;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        color: var(--gold) !important;
+        font-weight: bold;
+    }
+
+    .text-primary-custom {
+        color: var(--gold) !important;
+    }
+
+    .text-muted {
+        color: rgba(255, 255, 255, 0.7) !important;
+    }
+
+    /* Cards del Dashboard */
+    .card {
+        background: rgba(20, 20, 20, 0.85) !important;
+        border: 1px solid rgba(197, 167, 80, 0.3) !important;
+        color: white !important;
+        border-radius: 15px !important;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4) !important;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--gold), #b8941f);
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(197, 167, 80, 0.3) !important;
+            border-color: var(--gold) !important;
+        }
+
+    .card-header {
+        background: rgba(197, 167, 80, 0.15) !important;
+        border-bottom: 1px solid rgba(197, 167, 80, 0.4) !important;
+        color: var(--gold) !important;
+        font-weight: bold;
+        border-radius: 15px 15px 0 0 !important;
+    }
+
+    .card-body {
+        color: rgba(255, 255, 255, 0.95);
+        padding: 1.5rem;
+    }
+
+    /* Cards de estadísticas especiales */
+    .card.bg-primary-custom {
+        background: linear-gradient(135deg, var(--gold), #b8941f) !important;
+        color: var(--dark) !important;
+        border: none !important;
+    }
+
+    .card.bg-secondary-custom {
+        background: linear-gradient(135deg, var(--brown), #8b4b3d) !important;
+        color: white !important;
+        border: none !important;
+    }
+
+    .card.bg-success {
+        background: linear-gradient(135deg, #10b981, #047857) !important;
+        color: white !important;
+        border: none !important;
+    }
+
+    .card.bg-info {
+        background: linear-gradient(135deg, #06b6d4, #0891b2) !important;
+        color: white !important;
+        border: none !important;
+    }
+
+    .card.bg-warning {
+        background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+        color: var(--dark) !important;
+        border: none !important;
+    }
+
+    /* Botones */
+    .btn {
+        border-radius: 12px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: none;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .btn:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn:hover:before {
+            left: 100%;
+        }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--gold), #b8941f) !important;
+        color: var(--dark) !important;
+        box-shadow: 0 4px 15px rgba(197, 167, 80, 0.3);
+    }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #d4b851, var(--gold)) !important;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(197, 167, 80, 0.5) !important;
+            color: var(--dark) !important;
+        }
+
+    .btn-success {
+        background: linear-gradient(135deg, #10b981, #047857) !important;
+        color: white !important;
+    }
+
+    .btn-outline-primary {
+        border: 2px solid var(--gold) !important;
+        color: var(--gold) !important;
+        background: transparent !important;
+    }
+
+        .btn-outline-primary:hover {
+            background: var(--gold) !important;
+            color: var(--dark) !important;
+            transform: translateY(-2px);
+        }
+
+    .btn-outline-secondary {
+        border: 2px solid rgba(255, 255, 255, 0.4) !important;
+        color: rgba(255, 255, 255, 0.9) !important;
+        background: transparent !important;
+    }
+
+        .btn-outline-secondary:hover {
+            background: rgba(255, 255, 255, 0.1) !important;
+            color: white !important;
+            border-color: rgba(255, 255, 255, 0.6) !important;
+        }
+
+    /* Badges */
+    .badge {
+        border-radius: 8px;
+        font-weight: 600;
+        padding: 0.5rem 0.75rem;
+    }
+
+        .badge.bg-primary {
+            background: var(--gold) !important;
+            color: var(--dark);
+        }
+
+        .badge.bg-success {
+            background: #10b981 !important;
+        }
+
+        .badge.bg-danger {
+            background: #ef4444 !important;
+        }
+
+        .badge.bg-warning {
+            background: #f59e0b !important;
+            color: var(--dark);
+        }
+
+        .badge.bg-info {
+            background: #06b6d4 !important;
+        }
+
+        .badge.bg-secondary {
+            background: rgba(255, 255, 255, 0.2) !important;
+            color: white;
+        }
+
+    /* Tablas */
+    .table {
+        color: rgba(255, 255, 255, 0.95) !important;
+        background: transparent;
+    }
+
+        .table thead th {
+            background: rgba(197, 167, 80, 0.2) !important;
+            color: var(--gold) !important;
+            border-color: rgba(197, 167, 80, 0.4) !important;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.875rem;
+            letter-spacing: 0.5px;
+        }
+
+        .table tbody tr {
+            border-color: rgba(255, 255, 255, 0.1) !important;
+            transition: all 0.3s ease;
+        }
+
+            .table tbody tr:hover {
+                background: rgba(197, 167, 80, 0.15) !important;
+                transform: scale(1.01);
+                box-shadow: 0 4px 15px rgba(197, 167, 80, 0.2);
+            }
+
+    .table-responsive {
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Progress bars */
+    .progress {
+        background: rgba(255, 255, 255, 0.1) !important;
+        border-radius: 10px;
+        height: 8px;
+        overflow: hidden;
+    }
+
+    .progress-bar {
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+
+        .progress-bar.bg-success {
+            background: linear-gradient(90deg, #10b981, #047857) !important;
+        }
+
+        .progress-bar.bg-danger {
+            background: linear-gradient(90deg, #ef4444, #dc2626) !important;
+        }
+
+        .progress-bar.bg-warning {
+            background: linear-gradient(90deg, #f59e0b, #d97706) !important;
+        }
+
+    /* Links */
+    a {
+        color: var(--gold);
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+        a:hover {
+            color: #d4b851;
+            text-decoration: none;
+            text-shadow: 0 0 8px rgba(197, 167, 80, 0.6);
+        }
+
+    /* Iconos con efectos */
+    .fas, .fab {
+        transition: all 0.3s ease;
+    }
+
+    .card:hover .fas, .card:hover .fab {
+        transform: scale(1.1);
+        color: var(--gold);
+    }
+
+    /* Animaciones - SIN @@KEYFRAMES PORQUE CAUSA PROBLEMAS EN RAZOR */
+    .fade-in-up {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: all 0.8s ease-out;
+    }
+
+        .fade-in-up.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+    /* Responsive - SIN @@MEDIA PORQUE CAUSA PROBLEMAS EN RAZOR */
+    .mobile-responsive .card {
+        margin-bottom: 1.5rem;
+    }
+
+    .mobile-responsive h1 {
+        font-size: 2rem;
+    }
+
+    .mobile-responsive h2 {
+        font-size: 1.75rem;
+    }
+
+    .mobile-responsive .btn {
+        padding: 0.75rem 1.5rem;
+        font-size: 0.9rem;
+    }
+
+    /* Scrollbar personalizada */
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: rgba(20, 20, 20, 0.5);
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: var(--gold);
+        border-radius: 4px;
+    }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #d4b851;
+        }
+</style>
+
 <!-- Page Header -->
-<div class="row mb-4">
+<div class="row mb-4 fade-in-up">
     <div class="col-12">
         <div class="d-flex justify-content-between align-items-center">
             <div>
@@ -13,7 +349,7 @@
                 </h1>
                 <p class="text-muted mb-0">@Model.WelcomeMessage</p>
             </div>
-            <div class="text-end">
+            <div>
                 <a href="@Url.Action("Index", "Trip")" class="btn btn-primary me-2">
                     <i class="fas fa-plus me-1"></i>Ver Viajes
                 </a>
@@ -27,20 +363,20 @@
 
 <!-- Statistics Cards -->
 <div class="row mb-4">
-    <div class="col-md-4 mb-3">
+    <div class="col-md-4 mb-3 fade-in-up">
         <div class="card bg-primary-custom text-white h-100">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h6 class="card-title mb-1 text-white-50">Viajes de Hoy</h6>
+                        <h6 class="card-title mb-1">Viajes de Hoy</h6>
                         <h2 class="mb-0 fw-bold">@Model.TotalTripsToday</h2>
                     </div>
-                    <div class="text-white-50">
+                    <div>
                         <i class="fas fa-bus fa-2x"></i>
                     </div>
                 </div>
                 <div class="mt-2">
-                    <small class="text-white-50">
+                    <small>
                         <i class="fas fa-calendar me-1"></i>@Model.CurrentDate.ToString("dd/MM/yyyy")
                     </small>
                 </div>
@@ -48,20 +384,20 @@
         </div>
     </div>
 
-    <div class="col-md-4 mb-3">
+    <div class="col-md-4 mb-3 fade-in-up">
         <div class="card bg-secondary-custom text-white h-100">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h6 class="card-title mb-1 text-white-50">Ventas de Hoy</h6>
+                        <h6 class="card-title mb-1">Ventas de Hoy</h6>
                         <h2 class="mb-0 fw-bold">@Model.TotalSalesToday</h2>
                     </div>
-                    <div class="text-white-50">
+                    <div>
                         <i class="fas fa-ticket-alt fa-2x"></i>
                     </div>
                 </div>
                 <div class="mt-2">
-                    <small class="text-white-50">
+                    <small>
                         <i class="fas fa-clock me-1"></i>Actualizado ahora
                     </small>
                 </div>
@@ -69,20 +405,20 @@
         </div>
     </div>
 
-    <div class="col-md-4 mb-3">
+    <div class="col-md-4 mb-3 fade-in-up">
         <div class="card bg-success text-white h-100">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h6 class="card-title mb-1 text-white-50">Ingresos de Hoy</h6>
+                        <h6 class="card-title mb-1">Ingresos de Hoy</h6>
                         <h2 class="mb-0 fw-bold">@Model.TotalRevenueFormatted</h2>
                     </div>
-                    <div class="text-white-50">
+                    <div>
                         <i class="fas fa-dollar-sign fa-2x"></i>
                     </div>
                 </div>
                 <div class="mt-2">
-                    <small class="text-white-50">
+                    <small>
                         <i class="fas fa-chart-line me-1"></i>En tiempo real
                     </small>
                 </div>
@@ -93,7 +429,7 @@
 
 <!-- Quick Actions -->
 <div class="row mb-4">
-    <div class="col-12">
+    <div class="col-12 fade-in-up">
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title mb-3">
@@ -106,12 +442,12 @@
                         </a>
                     </div>
                     <div class="col-md-3 mb-2">
-                        <a href="@Url.Action("Index", "Sale")" class="btn btn-outline-success w-100">
+                        <a href="@Url.Action("Index", "Sale")" class="btn btn-outline-secondary w-100">
                             <i class="fas fa-plus me-2"></i>Nueva Venta
                         </a>
                     </div>
                     <div class="col-md-3 mb-2">
-                        <button type="button" class="btn btn-outline-info w-100" onclick="window.print()">
+                        <button type="button" class="btn btn-outline-secondary w-100" onclick="window.print()">
                             <i class="fas fa-print me-2"></i>Imprimir Reporte
                         </button>
                     </div>
@@ -129,12 +465,12 @@
 <!-- Main Content Row -->
 <div class="row">
     <!-- Upcoming Trips -->
-    <div class="col-lg-7 mb-4">
+    <div class="col-lg-7 mb-4 fade-in-up">
         <div class="card h-100">
-            <div class="card-header bg-white">
+            <div class="card-header">
                 <div class="d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">
-                        <i class="fas fa-clock me-2 text-primary-custom"></i>Próximos Viajes
+                        <i class="fas fa-clock me-2"></i>Próximos Viajes
                     </h5>
                     <a href="@Url.Action("Index", "Trip")" class="btn btn-sm btn-outline-primary">
                         Ver Todos <i class="fas fa-arrow-right ms-1"></i>
@@ -146,7 +482,7 @@
                 {
                     <div class="table-responsive">
                         <table class="table table-hover mb-0">
-                            <thead class="table-light">
+                            <thead>
                                 <tr>
                                     <th>Ruta</th>
                                     <th>Salida</th>
@@ -161,7 +497,7 @@
                                 {
                                     <tr>
                                         <td>
-                                            <strong class="text-dark">@trip.RouteInfo</strong>
+                                            <strong>@trip.RouteInfo</strong>
                                             <br>
                                             <small class="text-muted">@trip.DurationFormatted</small>
                                         </td>
@@ -170,7 +506,6 @@
                                             @if (trip.IsDepartureSoon)
                                             {
                                                 <br>
-
                                                 <span class="badge bg-warning text-dark">Próximo</span>
                                             }
                                         </td>
@@ -178,17 +513,17 @@
                                             <small class="text-muted">@trip.BusInfo</small>
                                         </td>
                                         <td>
-                                            <span class="@trip.AvailabilityClass fw-semibold">
+                                            <span class="fw-semibold text-success">
                                                 @trip.AvailableSeats/@trip.TotalSeats
                                             </span>
                                             <br>
                                             <div class="progress" style="height: 4px;">
-                                                <div class="progress-bar @(trip.HasAvailableSeats ? "bg-success" : "bg-danger")"
+                                                <div class="progress-bar bg-success"
                                                      style="width: @(trip.PercentageOccupied)%"></div>
                                             </div>
                                         </td>
                                         <td>
-                                            <span class="fw-semibold text-success">@trip.PriceFormatted</span>
+                                            <span class="fw-semibold text-primary-custom">@trip.PriceFormatted</span>
                                         </td>
                                         <td>
                                             <a href="@Url.Action("Details", "Trip", new { id = trip.Id })"
@@ -214,14 +549,14 @@
     </div>
 
     <!-- Recent Sales -->
-    <div class="col-lg-5 mb-4">
+    <div class="col-lg-5 mb-4 fade-in-up">
         <div class="card h-100">
-            <div class="card-header bg-white">
+            <div class="card-header">
                 <div class="d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">
-                        <i class="fas fa-receipt me-2 text-secondary-custom"></i>Ventas Recientes
+                        <i class="fas fa-receipt me-2"></i>Ventas Recientes
                     </h5>
-                    <a href="@Url.Action("Index", "Sale")" class="btn btn-sm btn-outline-success">
+                    <a href="@Url.Action("Index", "Sale")" class="btn btn-sm btn-outline-primary">
                         Ver Todas <i class="fas fa-arrow-right ms-1"></i>
                     </a>
                 </div>
@@ -231,7 +566,7 @@
                 {
                     <div class="table-responsive">
                         <table class="table table-hover mb-0">
-                            <thead class="table-light">
+                            <thead>
                                 <tr>
                                     <th>Cliente</th>
                                     <th>Asiento</th>
@@ -244,7 +579,7 @@
                                 {
                                     <tr>
                                         <td>
-                                            <strong class="text-dark">@sale.CustomerName</strong>
+                                            <strong>@sale.CustomerName</strong>
                                             <br>
                                             <small class="text-muted">@sale.DocumentNumber</small>
                                         </td>
@@ -259,7 +594,6 @@
                                             @if (sale.IsRecentSale)
                                             {
                                                 <br>
-
                                                 <span class="badge bg-info">Nuevo</span>
                                             }
                                         </td>
@@ -281,108 +615,25 @@
     </div>
 </div>
 
-<!-- Charts Section -->
-<div class="row">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header bg-white">
-                <h5 class="mb-0">
-                    <i class="fas fa-chart-bar me-2 text-info"></i>Estadísticas del Día
-                </h5>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <canvas id="tripsChart" width="400" height="200"></canvas>
-                    </div>
-                    <div class="col-md-6">
-                        <canvas id="salesChart" width="400" height="200"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 @section Scripts {
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
     <script>
-        // Configuración de colores
-        const colors = {
-            primary: '#1e40af',
-            secondary: '#059669',
-            success: '#10b981',
-            warning: '#f59e0b',
-            danger: '#ef4444'
-        };
+        $(document).ready(function() {
+            console.log('Dashboard cargado con estilos personalizados');
 
-        // Gráfico de Viajes
-        const tripsCtx = document.getElementById('tripsChart').getContext('2d');
-        const tripsChart = new Chart(tripsCtx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Viajes Activos', 'Asientos Ocupados', 'Asientos Disponibles'],
-                datasets: [{
-                    data: [@Model.TotalTripsToday, @(Model.UpcomingTrips.Sum(t => t.OccupiedSeats)), @(Model.UpcomingTrips.Sum(t => t.AvailableSeats))],
-                    backgroundColor: [colors.primary, colors.warning, colors.success],
-                    borderWidth: 2,
-                    borderColor: '#fff'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    title: {
-                        display: true,
-                        text: 'Distribución de Viajes y Asientos'
-                    },
-                    legend: {
-                        position: 'bottom'
-                    }
-                }
+            // Activar animaciones fade-in
+            setTimeout(function() {
+                $('.fade-in-up').addClass('active');
+            }, 100);
+
+            // Agregar clase responsive en móviles
+            if (window.innerWidth <= 768) {
+                $('body').addClass('mobile-responsive');
             }
-        });
 
-        // Gráfico de Ventas
-        const salesCtx = document.getElementById('salesChart').getContext('2d');
-        const salesChart = new Chart(salesCtx, {
-            type: 'bar',
-            data: {
-                labels: ['Ventas Hoy', 'Ingresos (S/)', 'Promedio por Venta'],
-                datasets: [{
-                    label: 'Estadísticas',
-                    data: [@Model.TotalSalesToday, @Model.TotalRevenue, @(Model.TotalSalesToday > 0 ? Model.TotalRevenue / Model.TotalSalesToday : 0)],
-                    backgroundColor: [colors.secondary, colors.success, colors.primary],
-                    borderColor: [colors.secondary, colors.success, colors.primary],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    title: {
-                        display: true,
-                        text: 'Resumen de Ventas del Día'
-                    },
-                    legend: {
-                        display: false
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
+            // Auto-refresh cada 5 minutos
+            setTimeout(function() {
+                location.reload();
+            }, 300000);
         });
-
-        // Auto-refresh cada 5 minutos
-        setTimeout(function() {
-            location.reload();
-        }, 300000);
     </script>
 }

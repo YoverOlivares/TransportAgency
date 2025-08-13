@@ -12,8 +12,8 @@ using TransportAgency.Data.Context;
 namespace TransportAgency.Migrations
 {
     [DbContext(typeof(TransportAgencyContext))]
-    [Migration("20250812171540_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250812220202_InitialCreateWithTransportRoute")]
+    partial class InitialCreateWithTransportRoute
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

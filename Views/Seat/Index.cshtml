@@ -176,7 +176,7 @@
                                     </span>
                                 </td>
                                 <td>S/ @seat.Price.ToString("F2")</td>
-                                <td>@seat.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>Creado recientemente</td>
                                 <td>
                                     <div class="btn-group btn-group-sm">
                                         <button class="btn btn-outline-info" onclick="showSeatDetails(@seat.Id)">
@@ -239,8 +239,8 @@
 
             // Simulate AJAX call to get seat details
             setTimeout(function() {
-                var seat = @Html.Raw(Json.Serialize(Model));
-                var seatData = seat.find(s => s.id === seatId);
+                var seats = @Html.Raw(Json.Serialize(Model));
+                var seatData = seats.find(s => s.id === seatId);
 
                 if (seatData) {
                     var content = `
@@ -250,12 +250,14 @@
                             <div class="col-6"><strong>Estado:</strong></div>
                             <div class="col-6">${seatData.isOccupied ? 'Ocupado' : 'Disponible'}</div>
                             <div class="col-6"><strong>Precio:</strong></div>
-                            <div class="col-6">S/ ${seatData.price.toFixed(2)}</div>
+                            <div class="col-6">S/ ${seatData.price ? seatData.price.toFixed(2) : '0.00'}</div>
                             <div class="col-6"><strong>Viaje:</strong></div>
-                            <div class="col-6">${seatData.tripInfo}</div>
+                            <div class="col-6">${seatData.tripInfo || 'Información no disponible'}</div>
                         </div>
                     `;
                     $('#seatDetailsContent').html(content);
+                } else {
+                    $('#seatDetailsContent').html('<p class="text-center text-muted">No se encontraron detalles del asiento.</p>');
                 }
             }, 500);
         }
