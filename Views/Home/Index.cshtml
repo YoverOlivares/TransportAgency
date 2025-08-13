@@ -3,342 +3,6 @@
     ViewData["Title"] = "Dashboard";
 }
 
-<style>
-    /* ESTILOS TRANSPORTAGENCY - INCLUIDOS EN INDEX */
-    body {
-        background: radial-gradient(125% 125% at 50% 10%, #000000 40%, #0d1a36 100%) !important;
-        color: white !important;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
-        min-height: 100vh;
-    }
-
-    :root {
-        --gold: rgb(197, 167, 80);
-        --dark: rgb(20, 20, 20);
-        --brown: rgb(132, 76, 68);
-    }
-
-    .container {
-        position: relative;
-        z-index: 1;
-    }
-
-    h1, h2, h3, h4, h5, h6 {
-        color: var(--gold) !important;
-        font-weight: bold;
-    }
-
-    .text-primary-custom {
-        color: var(--gold) !important;
-    }
-
-    .text-muted {
-        color: rgba(255, 255, 255, 0.7) !important;
-    }
-
-    /* Cards del Dashboard */
-    .card {
-        background: rgba(20, 20, 20, 0.85) !important;
-        border: 1px solid rgba(197, 167, 80, 0.3) !important;
-        color: white !important;
-        border-radius: 15px !important;
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4) !important;
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-    }
-
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--gold), #b8941f);
-        }
-
-        .card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(197, 167, 80, 0.3) !important;
-            border-color: var(--gold) !important;
-        }
-
-    .card-header {
-        background: rgba(197, 167, 80, 0.15) !important;
-        border-bottom: 1px solid rgba(197, 167, 80, 0.4) !important;
-        color: var(--gold) !important;
-        font-weight: bold;
-        border-radius: 15px 15px 0 0 !important;
-    }
-
-    .card-body {
-        color: rgba(255, 255, 255, 0.95);
-        padding: 1.5rem;
-    }
-
-    /* Cards de estadísticas especiales */
-    .card.bg-primary-custom {
-        background: linear-gradient(135deg, var(--gold), #b8941f) !important;
-        color: var(--dark) !important;
-        border: none !important;
-    }
-
-    .card.bg-secondary-custom {
-        background: linear-gradient(135deg, var(--brown), #8b4b3d) !important;
-        color: white !important;
-        border: none !important;
-    }
-
-    .card.bg-success {
-        background: linear-gradient(135deg, #10b981, #047857) !important;
-        color: white !important;
-        border: none !important;
-    }
-
-    .card.bg-info {
-        background: linear-gradient(135deg, #06b6d4, #0891b2) !important;
-        color: white !important;
-        border: none !important;
-    }
-
-    .card.bg-warning {
-        background: linear-gradient(135deg, #f59e0b, #d97706) !important;
-        color: var(--dark) !important;
-        border: none !important;
-    }
-
-    /* Botones */
-    .btn {
-        border-radius: 12px;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        border: none;
-        position: relative;
-        overflow: hidden;
-    }
-
-        .btn:before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s ease;
-        }
-
-        .btn:hover:before {
-            left: 100%;
-        }
-
-    .btn-primary {
-        background: linear-gradient(135deg, var(--gold), #b8941f) !important;
-        color: var(--dark) !important;
-        box-shadow: 0 4px 15px rgba(197, 167, 80, 0.3);
-    }
-
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #d4b851, var(--gold)) !important;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(197, 167, 80, 0.5) !important;
-            color: var(--dark) !important;
-        }
-
-    .btn-success {
-        background: linear-gradient(135deg, #10b981, #047857) !important;
-        color: white !important;
-    }
-
-    .btn-outline-primary {
-        border: 2px solid var(--gold) !important;
-        color: var(--gold) !important;
-        background: transparent !important;
-    }
-
-        .btn-outline-primary:hover {
-            background: var(--gold) !important;
-            color: var(--dark) !important;
-            transform: translateY(-2px);
-        }
-
-    .btn-outline-secondary {
-        border: 2px solid rgba(255, 255, 255, 0.4) !important;
-        color: rgba(255, 255, 255, 0.9) !important;
-        background: transparent !important;
-    }
-
-        .btn-outline-secondary:hover {
-            background: rgba(255, 255, 255, 0.1) !important;
-            color: white !important;
-            border-color: rgba(255, 255, 255, 0.6) !important;
-        }
-
-    /* Badges */
-    .badge {
-        border-radius: 8px;
-        font-weight: 600;
-        padding: 0.5rem 0.75rem;
-    }
-
-        .badge.bg-primary {
-            background: var(--gold) !important;
-            color: var(--dark);
-        }
-
-        .badge.bg-success {
-            background: #10b981 !important;
-        }
-
-        .badge.bg-danger {
-            background: #ef4444 !important;
-        }
-
-        .badge.bg-warning {
-            background: #f59e0b !important;
-            color: var(--dark);
-        }
-
-        .badge.bg-info {
-            background: #06b6d4 !important;
-        }
-
-        .badge.bg-secondary {
-            background: rgba(255, 255, 255, 0.2) !important;
-            color: white;
-        }
-
-    /* Tablas */
-    .table {
-        color: rgba(255, 255, 255, 0.95) !important;
-        background: transparent;
-    }
-
-        .table thead th {
-            background: rgba(197, 167, 80, 0.2) !important;
-            color: var(--gold) !important;
-            border-color: rgba(197, 167, 80, 0.4) !important;
-            font-weight: bold;
-            text-transform: uppercase;
-            font-size: 0.875rem;
-            letter-spacing: 0.5px;
-        }
-
-        .table tbody tr {
-            border-color: rgba(255, 255, 255, 0.1) !important;
-            transition: all 0.3s ease;
-        }
-
-            .table tbody tr:hover {
-                background: rgba(197, 167, 80, 0.15) !important;
-                transform: scale(1.01);
-                box-shadow: 0 4px 15px rgba(197, 167, 80, 0.2);
-            }
-
-    .table-responsive {
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    }
-
-    /* Progress bars */
-    .progress {
-        background: rgba(255, 255, 255, 0.1) !important;
-        border-radius: 10px;
-        height: 8px;
-        overflow: hidden;
-    }
-
-    .progress-bar {
-        border-radius: 10px;
-        transition: all 0.3s ease;
-    }
-
-        .progress-bar.bg-success {
-            background: linear-gradient(90deg, #10b981, #047857) !important;
-        }
-
-        .progress-bar.bg-danger {
-            background: linear-gradient(90deg, #ef4444, #dc2626) !important;
-        }
-
-        .progress-bar.bg-warning {
-            background: linear-gradient(90deg, #f59e0b, #d97706) !important;
-        }
-
-    /* Links */
-    a {
-        color: var(--gold);
-        text-decoration: none;
-        transition: all 0.3s ease;
-    }
-
-        a:hover {
-            color: #d4b851;
-            text-decoration: none;
-            text-shadow: 0 0 8px rgba(197, 167, 80, 0.6);
-        }
-
-    /* Iconos con efectos */
-    .fas, .fab {
-        transition: all 0.3s ease;
-    }
-
-    .card:hover .fas, .card:hover .fab {
-        transform: scale(1.1);
-        color: var(--gold);
-    }
-
-    /* Animaciones - SIN @@KEYFRAMES PORQUE CAUSA PROBLEMAS EN RAZOR */
-    .fade-in-up {
-        opacity: 0;
-        transform: translateY(30px);
-        transition: all 0.8s ease-out;
-    }
-
-        .fade-in-up.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-    /* Responsive - SIN @@MEDIA PORQUE CAUSA PROBLEMAS EN RAZOR */
-    .mobile-responsive .card {
-        margin-bottom: 1.5rem;
-    }
-
-    .mobile-responsive h1 {
-        font-size: 2rem;
-    }
-
-    .mobile-responsive h2 {
-        font-size: 1.75rem;
-    }
-
-    .mobile-responsive .btn {
-        padding: 0.75rem 1.5rem;
-        font-size: 0.9rem;
-    }
-
-    /* Scrollbar personalizada */
-    ::-webkit-scrollbar {
-        width: 8px;
-    }
-
-    ::-webkit-scrollbar-track {
-        background: rgba(20, 20, 20, 0.5);
-    }
-
-    ::-webkit-scrollbar-thumb {
-        background: var(--gold);
-        border-radius: 4px;
-    }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #d4b851;
-        }
-</style>
-
 <!-- Page Header -->
 <div class="row mb-4 fade-in-up">
     <div class="col-12">
@@ -436,22 +100,22 @@
                     <i class="fas fa-bolt me-2 text-warning"></i>Acciones Rápidas
                 </h5>
                 <div class="row">
-                    <div class="col-md-3 mb-2">
+                    <div class="col-lg-3 col-md-6 mb-2">
                         <a href="@Url.Action("Index", "Trip")" class="btn btn-outline-primary w-100">
                             <i class="fas fa-search me-2"></i>Buscar Viajes
                         </a>
                     </div>
-                    <div class="col-md-3 mb-2">
+                    <div class="col-lg-3 col-md-6 mb-2">
                         <a href="@Url.Action("Index", "Sale")" class="btn btn-outline-secondary w-100">
                             <i class="fas fa-plus me-2"></i>Nueva Venta
                         </a>
                     </div>
-                    <div class="col-md-3 mb-2">
+                    <div class="col-lg-3 col-md-6 mb-2">
                         <button type="button" class="btn btn-outline-secondary w-100" onclick="window.print()">
                             <i class="fas fa-print me-2"></i>Imprimir Reporte
                         </button>
                     </div>
-                    <div class="col-md-3 mb-2">
+                    <div class="col-lg-3 col-md-6 mb-2">
                         <a href="#" class="btn btn-outline-secondary w-100">
                             <i class="fas fa-cog me-2"></i>Configuración
                         </a>
@@ -618,7 +282,7 @@
 @section Scripts {
     <script>
         $(document).ready(function() {
-            console.log('Dashboard cargado con estilos personalizados');
+            console.log('Dashboard cargado correctamente');
 
             // Activar animaciones fade-in
             setTimeout(function() {

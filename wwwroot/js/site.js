@@ -1,96 +1,157 @@
 ﻿// ===== TRANSPORTAGENCY - SITE.JS =====
+// JavaScript principal para la aplicación TransportAgency
 
-// Inicialización cuando el DOM está listo
 $(document).ready(function () {
-    initializeApp();
+    initializeTransportAgency();
 });
 
-// Función principal de inicialización
-function initializeApp() {
+// ===== INICIALIZACIÓN PRINCIPAL =====
+function initializeTransportAgency() {
+    console.log('🚌 TransportAgency - Sistema inicializado');
+
     setupAnimations();
+    setupNavigation();
     setupInteractions();
     setupFormValidations();
     setupTooltips();
     setupModals();
     setupTables();
-    setupCharts();
+    setupAlerts();
+    setupScroll();
+
+    // Log de estado del sistema
+    logSystemStatus();
 }
 
 // ===== ANIMACIONES =====
 function setupAnimations() {
-    // Animación de entrada para tarjetas
-    $('.card').each(function (index) {
-        $(this).css({
-            'animation-delay': (index * 0.1) + 's',
-            'opacity': '0'
-        }).addClass('fade-in-up');
+    // Activar animaciones fade-in-up
+    setTimeout(() => {
+        $('.fade-in-up').addClass('active');
+    }, 100);
 
-        setTimeout(() => {
-            $(this).css('opacity', '1');
-        }, index * 100);
-    });
-
-    // Animación para estadísticas
+    // Animación de contadores numéricos
     animateCounters();
 
-    // Animación de progreso
+    // Animación de barras de progreso
     animateProgressBars();
-}
 
-// Animar contadores numéricos
-function animateCounters() {
-    $('.counter').each(function () {
-        const $this = $(this);
-        const countTo = parseInt($this.text().replace(/,/g, ''));
-
-        $({ countNum: 0 }).animate({
-            countNum: countTo
-        }, {
-            duration: 2000,
-            easing: 'swing',
-            step: function () {
-                $this.text(Math.floor(this.countNum).toLocaleString());
-            },
-            complete: function () {
-                $this.text(countTo.toLocaleString());
-            }
-        });
+    // Animaciones de entrada escalonada para cards
+    $('.card').each(function (index) {
+        const $card = $(this);
+        setTimeout(() => {
+            $card.addClass('fade-in');
+        }, index * 100);
     });
 }
 
-// Animar barras de progreso
+function animateCounters() {
+    $('.counter, .fw-bold:contains("0"), .fw-bold:contains("1"), .fw-bold:contains("2")').each(function () {
+        const $this = $(this);
+        const text = $this.text();
+        const number = parseFloat(text.replace(/[^\d.-]/g, ''));
+
+        if (!isNaN(number) && number > 0) {
+            let start = 0;
+            const increment = number / 30;
+            const timer = setInterval(() => {
+                start += increment;
+                if (start >= number) {
+                    $this.text(text);
+                    clearInterval(timer);
+                } else {
+                    $this.text(Math.floor(start));
+                }
+            }, 50);
+        }
+    });
+}
+
 function animateProgressBars() {
     $('.progress-bar').each(function () {
-        const $this = $(this);
-        const width = $this.attr('style').match(/width:\s*(\d+%)/);
+        const $bar = $(this);
+        const width = $bar.attr('style')?.match(/width:\s*(\d+%)/)?.[1] || '0%';
 
-        if (width) {
-            $this.css('width', '0%');
-            setTimeout(() => {
-                $this.css({
-                    'width': width[1],
-                    'transition': 'width 2s ease-in-out'
-                });
-            }, 500);
+        $bar.css('width', '0%');
+        setTimeout(() => {
+            $bar.css({
+                'width': width,
+                'transition': 'width 1.5s ease-in-out'
+            });
+        }, 300);
+    });
+}
+
+// ===== NAVEGACIÓN =====
+function setupNavigation() {
+    // Marcar enlace activo en navegación
+    const currentPath = window.location.pathname.toLowerCase();
+    $('.modern-nav-link').each(function () {
+        const linkPath = $(this).attr('href')?.toLowerCase();
+        if (linkPath && currentPath.includes(linkPath.split('/').pop())) {
+            $(this).addClass('active');
         }
+    });
+
+    // Navbar dinámico en scroll
+    setupDynamicNavbar();
+
+    // Cerrar dropdown al hacer click fuera
+    $(document).on('click', function (e) {
+        if (!$(e.target).closest('.dropdown').length) {
+            $('.dropdown-menu').removeClass('show');
+        }
+    });
+}
+
+function setupDynamicNavbar() {
+    let lastScroll = 0;
+
+    $(window).scroll(function () {
+        const currentScroll = $(this).scrollTop();
+        const navbar = $('.modern-navbar');
+
+        // Cambiar opacidad basado en scroll
+        if (currentScroll > 50) {
+            navbar.addClass('scrolled');
+            navbar.css({
+                'background': 'rgba(20, 20, 20, 0.98)',
+                'backdrop-filter': 'blur(20px)'
+            });
+        } else {
+            navbar.removeClass('scrolled');
+            navbar.css({
+                'background': 'rgba(20, 20, 20, 0.95)',
+                'backdrop-filter': 'blur(15px)'
+            });
+        }
+
+        // Auto-hide en mobile
+        if ($(window).width() <= 768) {
+            if (currentScroll > lastScroll && currentScroll > 100) {
+                navbar.css('transform', 'translateY(-100%)');
+            } else {
+                navbar.css('transform', 'translateY(0)');
+            }
+        }
+
+        lastScroll = currentScroll;
     });
 }
 
 // ===== INTERACCIONES =====
 function setupInteractions() {
-    // Efecto hover para tarjetas
+    // Efectos hover para cards
     $('.card').hover(
         function () {
-            $(this).addClass('shadow-gold');
-            $(this).find('.card-header').addClass('text-glow');
+            $(this).addClass('hover-lift shadow-gold');
         },
         function () {
-            $(this).removeClass('shadow-gold');
-            $(this).find('.card-header').removeClass('text-glow');
+            $(this).removeClass('hover-lift shadow-gold');
         }
     );
 
-    // Efecto hover para botones
+    // Efectos para botones
     $('.btn').hover(
         function () {
             if (!$(this).hasClass('disabled')) {
@@ -102,7 +163,7 @@ function setupInteractions() {
         }
     );
 
-    // Efecto click para botones con loading
+    // Loading state para botones
     $('.btn:not(.no-loading)').on('click', function (e) {
         const $btn = $(this);
         const originalText = $btn.html();
@@ -111,24 +172,20 @@ function setupInteractions() {
             $btn.html('<i class="fas fa-spinner fa-spin me-2"></i>Procesando...');
             $btn.addClass('disabled');
 
-            // Restaurar después de 2 segundos si no hay navegación
+            // Restaurar después de navegación o timeout
             setTimeout(() => {
-                if ($btn.length) {
+                if ($btn.length && $btn.hasClass('disabled')) {
                     $btn.html(originalText);
                     $btn.removeClass('disabled');
                 }
-            }, 2000);
+            }, 3000);
         }
     });
 
     // Navegación suave
     setupSmoothScrolling();
-
-    // Navbar dinámico
-    setupDynamicNavbar();
 }
 
-// Navegación suave
 function setupSmoothScrolling() {
     $('a[href*="#"]:not([href="#"])').click(function () {
         if (location.pathname.replace(/^\//, '') === this.pathname.replace(/^\//, '')
@@ -139,30 +196,9 @@ function setupSmoothScrolling() {
             if (target.length) {
                 $('html, body').animate({
                     scrollTop: target.offset().top - 100
-                }, 1000);
+                }, 800);
                 return false;
             }
-        }
-    });
-}
-
-// Navbar dinámico en scroll
-function setupDynamicNavbar() {
-    $(window).scroll(function () {
-        const scrollTop = $(window).scrollTop();
-
-        if (scrollTop > 50) {
-            $('.navbar').addClass('scrolled');
-            $('.navbar').css({
-                'background': 'rgba(20, 20, 20, 0.98)',
-                'backdrop-filter': 'blur(15px)'
-            });
-        } else {
-            $('.navbar').removeClass('scrolled');
-            $('.navbar').css({
-                'background': 'rgba(20, 20, 20, 0.95)',
-                'backdrop-filter': 'blur(10px)'
-            });
         }
     });
 }
@@ -174,7 +210,7 @@ function setupFormValidations() {
         validateField($(this));
     });
 
-    // Estilos para campos válidos/inválidos
+    // Estilos focus
     $('.form-control').on('focus', function () {
         $(this).removeClass('is-invalid is-valid');
         $(this).addClass('focused');
@@ -183,14 +219,23 @@ function setupFormValidations() {
     $('.form-control').on('blur', function () {
         $(this).removeClass('focused');
     });
+
+    // Prevenir doble submit
+    $('form').on('submit', function () {
+        const $form = $(this);
+        const $submitBtn = $form.find('button[type="submit"]');
+
+        $submitBtn.prop('disabled', true);
+        setTimeout(() => {
+            $submitBtn.prop('disabled', false);
+        }, 3000);
+    });
 }
 
-// Validar campo individual
 function validateField($field) {
     const value = $field.val().trim();
     const isRequired = $field.prop('required');
     const type = $field.attr('type');
-
     let isValid = true;
 
     if (isRequired && !value) {
@@ -209,7 +254,7 @@ function validateField($field) {
         }
     }
 
-    // Aplicar estilos
+    // Aplicar clases de validación
     if (isValid && value) {
         $field.removeClass('is-invalid').addClass('is-valid');
     } else if (!isValid) {
@@ -226,10 +271,12 @@ function setupTooltips() {
     // Inicializar tooltips de Bootstrap
     const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
+        return new bootstrap.Tooltip(tooltipTriggerEl, {
+            delay: { show: 300, hide: 100 }
+        });
     });
 
-    // Tooltips personalizados para botones
+    // Tooltips automáticos para botones con íconos
     $('.btn[title]').each(function () {
         new bootstrap.Tooltip(this);
     });
@@ -237,99 +284,111 @@ function setupTooltips() {
 
 // ===== MODALES =====
 function setupModals() {
-    // Efecto de entrada para modales
+    // Efectos de entrada
     $('.modal').on('show.bs.modal', function () {
         $(this).find('.modal-dialog').addClass('fade-in-up');
     });
 
-    // Auto-focus en primer input de modales
+    // Auto-focus en inputs
     $('.modal').on('shown.bs.modal', function () {
-        $(this).find('input:text:visible:first').focus();
+        $(this).find('input:visible:first').focus();
     });
 
-    // Limpiar formularios al cerrar modales
+    // Limpiar formularios al cerrar
     $('.modal').on('hidden.bs.modal', function () {
-        $(this).find('form')[0]?.reset();
-        $(this).find('.form-control').removeClass('is-valid is-invalid');
+        const $modal = $(this);
+        $modal.find('form')[0]?.reset();
+        $modal.find('.form-control').removeClass('is-valid is-invalid');
+        $modal.find('.modal-dialog').removeClass('fade-in-up');
     });
 }
 
 // ===== TABLAS =====
 function setupTables() {
-    // Efecto hover mejorado para filas de tabla
+    // Hover mejorado para filas
     $('.table tbody tr').hover(
         function () {
-            $(this).addClass('table-hover-effect');
+            $(this).addClass('table-hover-enhanced');
         },
         function () {
-            $(this).removeClass('table-hover-effect');
+            $(this).removeClass('table-hover-enhanced');
         }
     );
 
     // Búsqueda en tablas
-    $('.table-search').on('keyup', function () {
+    $('.table-search').on('keyup', debounce(function () {
         const value = $(this).val().toLowerCase();
-        const table = $($(this).data('table'));
+        const tableSelector = $(this).data('table') || '.table';
+        const $table = $(tableSelector);
 
-        table.find('tbody tr').filter(function () {
-            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+        $table.find('tbody tr').each(function () {
+            const text = $(this).text().toLowerCase();
+            $(this).toggle(text.indexOf(value) > -1);
+        });
+    }, 300));
+
+    // Click en filas para selección
+    $('.table-selectable tbody tr').click(function () {
+        $(this).toggleClass('table-active');
+        updateSelectedCount();
+    });
+}
+
+// ===== ALERTAS Y NOTIFICACIONES =====
+function setupAlerts() {
+    // Auto-hide para alertas
+    $('.alert:not(.alert-permanent)').each(function () {
+        const $alert = $(this);
+        setTimeout(() => {
+            $alert.fadeOut();
+        }, 5000);
+    });
+}
+
+// ===== SCROLL EFFECTS =====
+function setupScroll() {
+    // Parallax suave para el fondo
+    $(window).scroll(function () {
+        const scrolled = $(this).scrollTop();
+        const rate = scrolled * -0.5;
+
+        $('body::before').css({
+            'transform': `translate3d(0, ${rate}px, 0)`
         });
     });
 
-    // Ordenamiento de tablas
-    $('.sortable th').click(function () {
-        const table = $(this).parents('table').eq(0);
-        const index = $(this).index();
-        const rows = table.find('tr:gt(0)').toArray().sort(comparer(index));
+    // Reveal animations on scroll
+    $(window).scroll(function () {
+        $('.fade-in-up:not(.active)').each(function () {
+            const elementTop = $(this).offset().top;
+            const elementBottom = elementTop + $(this).outerHeight();
+            const viewportTop = $(window).scrollTop();
+            const viewportBottom = viewportTop + $(window).height();
 
-        this.asc = !this.asc;
-        if (!this.asc) {
-            rows = rows.reverse();
-        }
-
-        for (let i = 0; i < rows.length; i++) {
-            table.append(rows[i]);
-        }
-
-        // Actualizar indicadores de ordenamiento
-        $('.sortable th').removeClass('sort-asc sort-desc');
-        $(this).addClass(this.asc ? 'sort-asc' : 'sort-desc');
+            if (elementBottom > viewportTop && elementTop < viewportBottom) {
+                $(this).addClass('active');
+            }
+        });
     });
 }
 
-// Función comparadora para ordenamiento
-function comparer(index) {
-    return function (a, b) {
-        const valA = getCellValue(a, index);
-        const valB = getCellValue(b, index);
-        return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB);
-    };
-}
-
-function getCellValue(row, index) {
-    return $(row).children('td').eq(index).text();
-}
-
-// ===== GRÁFICOS =====
-function setupCharts() {
-    // Configuración base para Chart.js
-    if (typeof Chart !== 'undefined') {
-        Chart.defaults.color = 'rgba(255, 255, 255, 0.9)';
-        Chart.defaults.borderColor = 'rgba(197, 167, 80, 0.2)';
-        Chart.defaults.backgroundColor = 'rgba(197, 167, 80, 0.1)';
-    }
-}
-
 // ===== UTILIDADES =====
-
-// Mostrar notificación toast
 function showToast(message, type = 'info', duration = 5000) {
+    const iconMap = {
+        'success': 'check-circle',
+        'danger': 'exclamation-circle',
+        'warning': 'exclamation-triangle',
+        'info': 'info-circle'
+    };
+
+    const icon = iconMap[type] || 'info-circle';
+
     const toastHtml = `
-        <div class="toast align-items-center text-white bg-${type} border-0" role="alert">
+        <div class="toast align-items-center text-white bg-${type} border-0 position-fixed" 
+             style="top: 20px; right: 20px; z-index: 9999;" role="alert">
             <div class="d-flex">
                 <div class="toast-body">
-                    <i class="fas fa-${getIconForType(type)} me-2"></i>
-                    ${message}
+                    <i class="fas fa-${icon} me-2"></i>${message}
                 </div>
                 <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
             </div>
@@ -337,38 +396,23 @@ function showToast(message, type = 'info', duration = 5000) {
     `;
 
     const $toast = $(toastHtml);
-    $('.toast-container').append($toast);
+    $('body').append($toast);
 
     const toast = new bootstrap.Toast($toast[0], { delay: duration });
     toast.show();
 
-    // Remover del DOM después de que se oculte
     $toast.on('hidden.bs.toast', function () {
         $(this).remove();
     });
 }
 
-// Obtener icono según tipo de notificación
-function getIconForType(type) {
-    const icons = {
-        'success': 'check-circle',
-        'danger': 'exclamation-circle',
-        'warning': 'exclamation-triangle',
-        'info': 'info-circle',
-        'primary': 'star'
-    };
-    return icons[type] || 'info-circle';
-}
-
-// Formatear números como moneda
-function formatCurrency(amount) {
+function formatCurrency(amount, currency = 'PEN') {
     return new Intl.NumberFormat('es-PE', {
         style: 'currency',
-        currency: 'PEN'
+        currency: currency
     }).format(amount);
 }
 
-// Formatear fechas
 function formatDate(date, format = 'dd/MM/yyyy') {
     const d = new Date(date);
     const day = String(d.getDate()).padStart(2, '0');
@@ -387,7 +431,6 @@ function formatDate(date, format = 'dd/MM/yyyy') {
     }
 }
 
-// Debounce function para optimizar eventos
 function debounce(func, wait, immediate) {
     let timeout;
     return function executedFunction() {
@@ -404,63 +447,98 @@ function debounce(func, wait, immediate) {
     };
 }
 
-// Auto-refresh para páginas que lo necesiten
-function setupAutoRefresh(interval = 300000) { // 5 minutos por defecto
-    if ($('body').data('auto-refresh') === 'true') {
-        setTimeout(function () {
-            if (!$('.modal.show').length) { // No refrescar si hay modales abiertos
-                location.reload();
-            }
-        }, interval);
+function updateSelectedCount() {
+    const count = $('.table-active').length;
+    $('.selected-count').text(`${count} elementos seleccionados`);
+}
+
+// ===== LOGGING Y DEBUG =====
+function logSystemStatus() {
+    const hasNavbar = $('.modern-navbar').length > 0;
+    const hasFooter = $('.modern-footer').length > 0;
+    const hasCss = window.getComputedStyle(document.body).backgroundImage.includes('radial-gradient');
+
+    console.log('📊 Estado del Sistema TransportAgency:');
+    console.log(`   Navbar: ${hasNavbar ? '✅' : '❌'}`);
+    console.log(`   Footer: ${hasFooter ? '✅' : '❌'}`);
+    console.log(`   CSS: ${hasCss ? '✅' : '❌'}`);
+    console.log(`   jQuery: ${typeof $ !== 'undefined' ? '✅' : '❌'}`);
+    console.log(`   Bootstrap: ${typeof bootstrap !== 'undefined' ? '✅' : '❌'}`);
+
+    if (hasNavbar && hasFooter && hasCss) {
+        console.log('🎉 Sistema completamente funcional');
+    } else {
+        console.warn('⚠️ Revisar configuración del sistema');
     }
 }
 
-// Configurar auto-refresh
-$(document).ready(function () {
-    setupAutoRefresh();
-});
-
 // ===== EVENTOS GLOBALES =====
-
-// Manejo de errores de AJAX
 $(document).ajaxError(function (event, xhr, settings) {
     console.error('Error AJAX:', xhr.status, xhr.statusText);
     showToast('Error en la comunicación con el servidor', 'danger');
 });
 
-// Loading global para AJAX
 $(document).ajaxStart(function () {
     $('body').addClass('loading');
 }).ajaxStop(function () {
     $('body').removeClass('loading');
 });
 
-// Prevenir double-click en formularios
-$('form').on('submit', function () {
-    $(this).find('button[type="submit"]').prop('disabled', true);
-});
+// ===== FUNCIONES ESPECÍFICAS PARA TRANSPORTAGENCY =====
 
-// ===== EFECTOS VISUALES ADICIONALES =====
+// Función para manejar selección de asientos
+function selectSeat(seatId, seatNumber, price) {
+    $('.seat-btn').removeClass('selected');
+    $(`.seat-btn[data-seat-id="${seatId}"]`).addClass('selected');
 
-// Partículas de fondo (opcional)
-function createParticleEffect() {
-    if ($('.particle-container').length === 0) {
-        $('body').append('<div class="particle-container"></div>');
+    // Actualizar información del asiento seleccionado
+    $('#selected-seat-info').show();
+    $('#selected-seat-number').text(seatNumber);
+    $('#selected-seat-price').text(formatCurrency(price));
 
-        for (let i = 0; i < 50; i++) {
-            const particle = $('<div class="particle"></div>');
-            particle.css({
-                left: Math.random() * 100 + '%',
-                animationDelay: Math.random() * 20 + 's',
-                animationDuration: (Math.random() * 10 + 10) + 's'
-            });
-            $('.particle-container').append(particle);
-        }
+    console.log(`Asiento seleccionado: ${seatNumber} - ${formatCurrency(price)}`);
+}
+
+// Función para actualizar disponibilidad de asientos
+function updateSeatAvailability(tripId) {
+    // Simular llamada AJAX para actualizar disponibilidad
+    $.get(`/Seat/CheckAvailability/${tripId}`)
+        .done(function (data) {
+            if (data.success) {
+                $('.available-count').text(data.available);
+                $('.occupied-count').text(data.occupied);
+                showToast('Disponibilidad actualizada', 'success');
+            }
+        })
+        .fail(function () {
+            showToast('Error al actualizar disponibilidad', 'danger');
+        });
+}
+
+// Función para auto-refresh de páginas específicas
+function setupAutoRefresh(interval = 300000) { // 5 minutos
+    if ($('body').data('auto-refresh') === 'true') {
+        setTimeout(function () {
+            if (!$('.modal.show').length && !$('input:focus').length) {
+                location.reload();
+            }
+        }, interval);
     }
 }
 
-// Inicializar efectos opcionales
+// Inicializar auto-refresh para páginas que lo necesiten
 $(document).ready(function () {
-    // Descomentar si quieres partículas de fondo
-    // createParticleEffect();
+    setupAutoRefresh();
 });
+
+// ===== EXPORT FUNCTIONS =====
+window.TransportAgency = {
+    showToast,
+    formatCurrency,
+    formatDate,
+    selectSeat,
+    updateSeatAvailability,
+    logSystemStatus
+};
+
+console.log('🚌 TransportAgency site.js cargado completamente');
