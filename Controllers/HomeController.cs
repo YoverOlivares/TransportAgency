@@ -1,93 +1,123 @@
 using Microsoft.AspNetCore.Mvc;
-using TransportAgency.Models;
 using TransportAgency.Models.ViewModels;
-using TransportAgency.Business.Interfaces;
-using System.Diagnostics;
+using TransportAgency.Services;
 
 namespace TransportAgency.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-        private readonly ITripService? _tripService;
-        private readonly ISaleService? _saleService;
+        private readonly ITicketService _ticketService;
 
-        public HomeController(ILogger<HomeController> logger, ITripService? tripService = null, ISaleService? saleService = null)
+        public HomeController(ITicketService ticketService)
         {
-            _logger = logger;
-            _tripService = tripService;
-            _saleService = saleService;
+            _ticketService = ticketService;
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
+        {
+            var model = new TripSearchViewModel();
+            ViewBag.Cities = _ticketService.GetAvailableCities();
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult SearchTrips(TripSearchViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Cities = _ticketService.GetAvailableCities();
+                return View("Index", model);
+            }
+
+            if (model.TravelDate < DateTime.Today)
+            {
+                ModelState.AddModelError("TravelDate", "La fecha de viaje no puede ser anterior a hoy");
+                ViewBag.Cities = _ticketService.GetAvailableCities();
+                return View("Index", model);
+            }
+
+            var trips = _ticketService.GetAvailableTrips(model.Origin, model.Destination, model.TravelDate);
+
+            if (!trips.Any())
+            {
+                TempData["ErrorMessage"] = "No hay viajes disponibles para la ruta y fecha seleccionadas.";
+                ViewBag.Cities = _ticketService.GetAvailableCities();
+                return View("Index", model);
+            }
+
+            ViewBag.SearchData = model;
+            return View("SearchResults", trips);
+        }
+
+        public IActionResult SearchResults()
+        {
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public IActionResult SelectSeat(string origin, string destination, DateTime travelDate,
+            string departureTime, string arrivalTime, decimal price, string duration, string busType)
+        {
+            var availableSeats = _ticketService.GetAvailableSeats(origin, destination, travelDate, departureTime);
+
+            var model = new PassengerViewModel
+            {
+                Origin = origin,
+                Destination = destination,
+                TravelDate = travelDate,
+                DepartureTime = departureTime,
+                ArrivalTime = arrivalTime,
+                Price = price,
+                Duration = duration,
+                BusType = busType
+            };
+
+            ViewBag.AvailableSeats = availableSeats;
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult ProcessPassengerData(PassengerViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var availableSeats = _ticketService.GetAvailableSeats(model.Origin, model.Destination, model.TravelDate, model.DepartureTime);
+                ViewBag.AvailableSeats = availableSeats;
+                return View("SelectSeat", model);
+            }
+
+            return View("Confirmation", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ConfirmPurchase(PassengerViewModel model)
         {
             try
             {
-                var viewModel = new DashboardViewModel
-                {
-                    CurrentDate = DateTime.Now
-                };
-
-                // Si los servicios están disponibles, obtener datos reales
-                if (_tripService != null)
-                {
-                    var todayTrips = await _tripService.GetTodayTripsAsync();
-                    viewModel.TotalTripsToday = todayTrips.Count();
-
-                    var upcomingTrips = await _tripService.GetUpcomingTripsAsync(5);
-                    viewModel.UpcomingTrips = upcomingTrips.Select(trip => new TripViewModel
-                    {
-                        Id = trip.Id,
-                        BusInfo = trip.BusInfo,
-                        RouteInfo = trip.RouteInfo,
-                        DepartureTime = trip.DepartureTime,
-                        ArrivalTime = trip.ArrivalTime,
-                        Price = trip.Price,
-                        AvailableSeats = trip.AvailableSeats,
-                        TotalSeats = trip.TotalSeats,
-                        IsActive = trip.IsActive
-                    }).ToList();
-                }
-
-                if (_saleService != null)
-                {
-                    var todaySales = await _saleService.GetSalesByDateAsync(DateTime.Today);
-                    viewModel.TotalSalesToday = todaySales.Count();
-                    viewModel.TotalRevenue = await _saleService.GetTotalRevenueByDateAsync(DateTime.Today);
-
-                    var recentSales = await _saleService.GetRecentSalesAsync(5);
-                    viewModel.RecentSales = recentSales.Select(sale => new SaleViewModel
-                    {
-                        Id = sale.Id,
-                        CustomerName = sale.CustomerName,
-                        DocumentNumber = sale.DocumentNumber,
-                        SeatNumber = sale.SeatNumber,
-                        TripInfo = sale.TripInfo,
-                        Amount = sale.Amount,
-                        SaleDate = sale.SaleDate,
-                        ReceiptNumber = sale.ReceiptNumber
-                    }).ToList();
-                }
-
-                return View(viewModel);
+                var saleId = await _ticketService.CreateSaleAsync(model);
+                TempData["SuccessMessage"] = "¡Compra realizada exitosamente!";
+                return RedirectToAction("PurchaseConfirmation", new { id = saleId });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error al cargar el dashboard");
-
-                // Retornar vista con datos por defecto en caso de error
-                var defaultViewModel = new DashboardViewModel
-                {
-                    CurrentDate = DateTime.Now,
-                    TotalTripsToday = 0,
-                    TotalSalesToday = 0,
-                    TotalRevenue = 0,
-                    UpcomingTrips = new List<TripViewModel>(),
-                    RecentSales = new List<SaleViewModel>()
-                };
-
-                return View(defaultViewModel);
+                TempData["ErrorMessage"] = "Error al procesar la compra: " + ex.Message;
+                var availableSeats = _ticketService.GetAvailableSeats(model.Origin, model.Destination, model.TravelDate, model.DepartureTime);
+                ViewBag.AvailableSeats = availableSeats;
+                return View("SelectSeat", model);
             }
+        }
+
+        public async Task<IActionResult> PurchaseConfirmation(int id)
+        {
+            var confirmation = await _ticketService.GetSaleConfirmationAsync(id);
+
+            if (confirmation == null)
+            {
+                TempData["ErrorMessage"] = "No se encontró la compra especificada.";
+                return RedirectToAction("Index");
+            }
+
+            return View(confirmation);
         }
 
         public IActionResult Privacy()
@@ -98,7 +128,7 @@ namespace TransportAgency.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View();
         }
     }
 }

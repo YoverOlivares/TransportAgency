@@ -1,0 +1,72 @@
+﻿<!-- Views/Home/SearchResults.cshtml - Resultados de búsqueda -->
+@model List<AvailableTripViewModel>
+@{
+    ViewData["Title"] = "Viajes Disponibles";
+    var searchData = ViewBag.SearchData as TripSearchViewModel;
+}
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>Viajes Disponibles</h2>
+            <p class="text-muted mb-0">
+                @searchData.Origin → @searchData.Destination | @searchData.TravelDate.ToString("dd/MM/yyyy")
+            </p>
+        </div>
+        <a href="@Url.Action("Index")" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i>Nueva Búsqueda
+        </a>
+    </div>
+
+    <div class="row">
+        @foreach (var trip in Model)
+        {
+            <div class="col-12 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-3">
+                                <h5 class="mb-1">@trip.DepartureTime</h5>
+                                <small class="text-muted">Salida</small>
+                                <hr class="my-2">
+                                <h5 class="mb-1">@trip.ArrivalTime</h5>
+                                <small class="text-muted">Llegada</small>
+                            </div>
+
+                            <div class="col-md-2 text-center">
+                                <p class="mb-1"><strong>@trip.Duration</strong></p>
+                                <small class="text-muted">Duración</small>
+                            </div>
+
+                            <div class="col-md-2">
+                                <p class="mb-1"><strong>@trip.BusType</strong></p>
+                                <small class="text-muted">Tipo de Bus</small>
+                            </div>
+
+                            <div class="col-md-2">
+                                <p class="mb-1"><strong>@trip.AvailableSeats asientos</strong></p>
+                                <small class="text-muted">Disponibles</small>
+                            </div>
+
+                            <div class="col-md-2">
+                                <h4 class="text-success mb-2">@trip.PriceFormatted</h4>
+                                <a href="@Url.Action("SelectSeat", new {
+                                    origin = trip.Origin,
+                                    destination = trip.Destination,
+                                    travelDate = trip.TravelDate.ToString("yyyy-MM-dd"),
+                                    departureTime = trip.DepartureTime,
+                                    arrivalTime = trip.ArrivalTime,
+                                    price = trip.Price,
+                                    duration = trip.Duration,
+                                    busType = trip.BusType
+                                })" class="btn btn-primary w-100">
+                                    Seleccionar
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

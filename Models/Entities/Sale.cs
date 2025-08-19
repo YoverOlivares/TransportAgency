@@ -7,18 +7,28 @@ namespace TransportAgency.Models.Entities
         public int Id { get; set; }
 
         public int CustomerId { get; set; }
-        public int SeatId { get; set; }
+        public virtual Customer Customer { get; set; } = null!;
+
+        [Required, MaxLength(100)]
+        public string Origin { get; set; } = string.Empty;
+
+        [Required, MaxLength(100)]
+        public string Destination { get; set; } = string.Empty;
+
+        public DateTime TravelDate { get; set; }
+
+        [Required, MaxLength(10)]
+        public string SeatNumber { get; set; } = string.Empty;
 
         [Range(0.01, 9999.99)]
-        public decimal Amount { get; set; }
+        public decimal Price { get; set; }
 
-        public DateTime SaleDate { get; set; } = DateTime.Now;
+        public DateTime PurchaseDate { get; set; } = DateTime.Now;
 
-        [StringLength(20)]
-        public string ReceiptNumber { get; set; } = string.Empty;
+        [Required, MaxLength(50)]
+        public string TicketNumber { get; set; } = string.Empty;
 
-        // Navigation properties
-        public virtual Customer Customer { get; set; } = null!;
-        public virtual Seat Seat { get; set; } = null!;
+        [MaxLength(20)]
+        public string TravelTime { get; set; } = string.Empty;
     }
 }

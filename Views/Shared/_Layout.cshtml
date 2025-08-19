@@ -1,191 +1,147 @@
-﻿<!DOCTYPE html>
+﻿<!-- Views/Shared/_Layout.cshtml -->
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - TransportAgency</title>
+    <title>@ViewData["Title"] - Transport Agency</title>
 
-    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <style>
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+
+        .card {
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            border: 1px solid rgba(0, 0, 0, 0.125);
+        }
+
+        .btn-primary {
+            background-color: #667eea;
+            border-color: #667eea;
+        }
+
+            .btn-primary:hover {
+                background-color: #5a67d8;
+                border-color: #5a67d8;
+            }
+
+        .text-primary {
+            color: #667eea !important;
+        }
+
+        .bg-primary {
+            background-color: #667eea !important;
+        }
+
+        .navbar {
+            box-shadow: 0 2px 4px rgba(0,0,0,.1);
+        }
+
+        footer {
+            background-color: #f8f9fa;
+            margin-top: 5rem;
+        }
+    </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark modern-navbar sticky-top">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
-            <!-- Brand -->
-            <a class="navbar-brand modern-brand" asp-controller="Home" asp-action="Index">
-                <i class="fas fa-bus me-2"></i>
-                <span>TransportAgency</span>
+            <a class="navbar-brand" href="@Url.Action("Index", "Home")">
+                <i class="fas fa-bus me-2"></i>Transport Agency
             </a>
 
-            <!-- Mobile Toggle -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <!-- Navigation Links -->
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav flex-grow-1 justify-content-center">
+                <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link modern-nav-link" asp-controller="Home" asp-action="Index">
-                            <i class="fas fa-home nav-icon"></i>
-                            <span>Inicio</span>
+                        <a class="nav-link" href="@Url.Action("Index", "Home")">
+                            <i class="fas fa-home me-1"></i>Inicio
                         </a>
                     </li>
+                </ul>
+
+                <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link modern-nav-link" asp-controller="Trip" asp-action="Index">
-                            <i class="fas fa-route nav-icon"></i>
-                            <span>Viajes</span>
+                        <a class="nav-link" href="@Url.Action("Login", "Admin")">
+                            <i class="fas fa-user-shield me-1"></i>Admin
                         </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link modern-nav-link" asp-controller="Sale" asp-action="Index">
-                            <i class="fas fa-ticket-alt nav-icon"></i>
-                            <span>Ventas</span>
-                        </a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link modern-nav-link dropdown-toggle" href="#" id="adminDropdown"
-                           role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-cog nav-icon"></i>
-                            <span>Administración</span>
-                        </a>
-                        <ul class="dropdown-menu modern-dropdown">
-                            <li>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-chart-line me-2"></i>Dashboard
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-bus me-2"></i>Gestionar Buses
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-map-marked-alt me-2"></i>Gestionar Rutas
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-money-bill-wave me-2"></i>Reportes
-                                </a>
-                            </li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <a class="dropdown-item" asp-controller="Home" asp-action="Privacy">
-                                    <i class="fas fa-shield-alt me-2"></i>Privacidad
-                                </a>
-                            </li>
-                        </ul>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Alert Messages -->
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="container mt-3">
-            <div class="alert alert-success alert-dismissible fade show modern-alert" role="alert">
+    <main class="container mt-4">
+        <!-- Mensajes de alerta -->
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
                 <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
-        </div>
-    }
+        }
 
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <div class="container mt-3">
-            <div class="alert alert-danger alert-dismissible fade show modern-alert" role="alert">
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 <i class="fas fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
-        </div>
-    }
+        }
 
-    @if (TempData["InfoMessage"] != null)
-    {
-        <div class="container mt-3">
-            <div class="alert alert-info alert-dismissible fade show modern-alert" role="alert">
+        @if (TempData["InfoMessage"] != null)
+        {
+            <div class="alert alert-info alert-dismissible fade show" role="alert">
                 <i class="fas fa-info-circle me-2"></i>@TempData["InfoMessage"]
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
-        </div>
-    }
+        }
 
-    <!-- Main Content -->
-    <main class="main-content">
-        <div class="container">
-            @RenderBody()
-        </div>
+        @RenderBody()
     </main>
 
-    <!-- Footer -->
-    <footer class="modern-footer mt-auto">
+    <footer class="py-4 mt-5">
         <div class="container">
-            <div class="row py-4">
-                <div class="col-md-4 mb-3">
-                    <h5 class="footer-title mb-3">
-                        <i class="fas fa-bus me-2"></i>TransportAgency
-                    </h5>
-                    <p class="footer-text mb-2">Tu agencia de confianza para viajes seguros y cómodos por todo el Perú.</p>
-                    <p class="footer-text-small mb-0">Conectando destinos desde 2025</p>
+            <div class="row">
+                <div class="col-md-6">
+                    <h5><i class="fas fa-bus me-2"></i>Transport Agency</h5>
+                    <p class="text-muted">Tu mejor opción para viajar por todo el Perú</p>
                 </div>
-                <div class="col-md-4 mb-3">
-                    <h6 class="footer-subtitle mb-3">Contacto</h6>
-                    <p class="footer-contact mb-2">
-                        <i class="fas fa-map-marker-alt me-2 contact-icon"></i>
-                        Av. Principal 123, Lima, Perú
+                <div class="col-md-6">
+                    <h6>Contacto</h6>
+                    <p class="text-muted mb-1">
+                        <i class="fas fa-phone me-2"></i>+51 123 456 789
                     </p>
-                    <p class="footer-contact mb-2">
-                        <i class="fas fa-phone me-2 contact-icon"></i>
-                        +51 123 456 789
+                    <p class="text-muted mb-1">
+                        <i class="fas fa-envelope me-2"></i>info@transportagency.com
                     </p>
-                    <p class="footer-contact mb-0">
-                        <i class="fas fa-envelope me-2 contact-icon"></i>
-                        info@transportagency.com
+                    <p class="text-muted">
+                        <i class="fas fa-map-marker-alt me-2"></i>Lima, Perú
                     </p>
-                </div>
-                <div class="col-md-4 mb-3">
-                    <h6 class="footer-subtitle mb-3">Enlaces Rápidos</h6>
-                    <ul class="footer-links list-unstyled">
-                        <li class="mb-1"><a href="#" class="footer-link">Términos y Condiciones</a></li>
-                        <li class="mb-1"><a href="#" class="footer-link">Política de Privacidad</a></li>
-                        <li class="mb-1"><a href="#" class="footer-link">Preguntas Frecuentes</a></li>
-                        <li class="mb-1"><a href="#" class="footer-link">Soporte al Cliente</a></li>
-                    </ul>
                 </div>
             </div>
-            <hr class="footer-divider">
-            <div class="row align-items-center py-3">
-                <div class="col-md-6">
-                    <p class="footer-copyright mb-0">&copy; 2025 - TransportAgency - Todos los derechos reservados</p>
-                </div>
-                <div class="col-md-6 text-md-end">
-                    <div class="social-links">
-                        <a href="#" class="social-link me-3" title="Facebook"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="social-link me-3" title="Twitter"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="social-link me-3" title="Instagram"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="social-link" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
-                    </div>
-                </div>
+            <hr>
+            <div class="text-center">
+                <p class="text-muted mb-0">&copy; 2025 Transport Agency. Todos los derechos reservados.</p>
             </div>
         </div>
     </footer>
 
-    <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

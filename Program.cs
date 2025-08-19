@@ -1,44 +1,27 @@
 using Microsoft.EntityFrameworkCore;
-using TransportAgency.Data.Context;
-using TransportAgency.Data.Repositories.Interfaces;
-using TransportAgency.Data.Repositories.Implementations;
-using TransportAgency.Business.Interfaces;
-using TransportAgency.Business.Services;
-using TransportAgency.Models.Entities;
-using RouteEntity = TransportAgency.Models.Entities.Route;
+using TransportAgency.Data;
+using TransportAgency.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-// Add Entity Framework
+// Entity Framework
 builder.Services.AddDbContext<TransportAgencyContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Register Generic Repository
-builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-
-// Register Specific Repositories
-builder.Services.AddScoped<IBusRepository, BusRepository>();
-builder.Services.AddScoped<ISaleRepository, SaleRepository>();
-builder.Services.AddScoped<ISeatRepository, SeatRepository>();
-builder.Services.AddScoped<ITripRepository, TripRepository>();
-
-// Register Entity Repositories for Dependency Injection
-builder.Services.AddScoped<IGenericRepository<Customer>, GenericRepository<Customer>>();
-builder.Services.AddScoped<IGenericRepository<Bus>, GenericRepository<Bus>>();
-builder.Services.AddScoped<IGenericRepository<RouteEntity>, GenericRepository<RouteEntity>>();
-builder.Services.AddScoped<IGenericRepository<Trip>, GenericRepository<Trip>>();
-builder.Services.AddScoped<IGenericRepository<Seat>, GenericRepository<Seat>>();
-builder.Services.AddScoped<IGenericRepository<Sale>, GenericRepository<Sale>>();
-
-// Register Business Services
-builder.Services.AddScoped<IBusService, BusService>();
-builder.Services.AddScoped<ISaleService, SaleService>();
-builder.Services.AddScoped<ISeatService, SeatService>();
-builder.Services.AddScoped<ITripService, TripService>();
+// Services
+builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddScoped<IPdfService, PdfService>();
+
+// Session for admin login
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 
 var app = builder.Build();
 
@@ -49,11 +32,11 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-// IMPORTANTE: Configuración de archivos estáticos
 app.UseHttpsRedirection();
-app.UseStaticFiles(); // Esta línea es CRÍTICA para servir CSS/JS
+app.UseStaticFiles();
 
 app.UseRouting();
+app.UseSession();
 app.UseAuthorization();
 
 app.MapControllerRoute(

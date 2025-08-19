@@ -6,24 +6,20 @@ namespace TransportAgency.Models.Entities
     {
         public int Id { get; set; }
 
-        [Required]
-        [StringLength(100)]
+        [Required, MaxLength(100)]
         public string FullName { get; set; } = string.Empty;
 
-        [Required]
-        [StringLength(20)]
+        [Required, MaxLength(20)]
         public string DocumentNumber { get; set; } = string.Empty;
 
-        [StringLength(15)]
+        [MaxLength(15)]
         public string? Phone { get; set; }
 
-        [StringLength(100)]
-        [EmailAddress]
+        [MaxLength(100), EmailAddress]
         public string? Email { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
-        // Navigation properties
         public virtual ICollection<Sale> Sales { get; set; } = new List<Sale>();
     }
 }

@@ -1,0 +1,99 @@
+﻿<!-- Views/Home/SelectSeat.cshtml - Selección de asiento y datos del pasajero -->
+@model PassengerViewModel
+@{
+    ViewData["Title"] = "Datos del Pasajero";
+    var availableSeats = ViewBag.AvailableSeats as List<string>;
+}
+
+<div class="container">
+    <div class="row">
+        <!-- Información del viaje -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-info-circle me-2"></i>Resumen del Viaje</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Ruta:</strong> @Model.RouteInfo</p>
+                    <p><strong>Fecha:</strong> @Model.TravelInfo</p>
+                    <p><strong>Llegada:</strong> @Model.ArrivalTime</p>
+                    <p><strong>Duración:</strong> @Model.Duration</p>
+                    <p><strong>Tipo de Bus:</strong> @Model.BusType</p>
+                    <hr>
+                    <h4 class="text-success">Total: @Model.PriceFormatted</h4>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulario del pasajero -->
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-user me-2"></i>Datos del Pasajero</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="ProcessPassengerData" method="post">
+                        <!-- Hidden fields para datos del viaje -->
+                        <input asp-for="Origin" type="hidden" />
+                        <input asp-for="Destination" type="hidden" />
+                        <input asp-for="TravelDate" type="hidden" />
+                        <input asp-for="DepartureTime" type="hidden" />
+                        <input asp-for="ArrivalTime" type="hidden" />
+                        <input asp-for="Price" type="hidden" />
+                        <input asp-for="Duration" type="hidden" />
+                        <input asp-for="BusType" type="hidden" />
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="FullName" class="form-label">Nombre Completo *</label>
+                                <input asp-for="FullName" class="form-control" required />
+                                <span asp-validation-for="FullName" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="DocumentNumber" class="form-label">Número de Documento *</label>
+                                <input asp-for="DocumentNumber" class="form-control" placeholder="DNI, CE, etc." required />
+                                <span asp-validation-for="DocumentNumber" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Phone" class="form-label">Teléfono</label>
+                                <input asp-for="Phone" class="form-control" placeholder="+51 999 999 999" />
+                                <span asp-validation-for="Phone" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Email" class="form-label">Correo Electrónico</label>
+                                <input asp-for="Email" class="form-control" placeholder="correo@ejemplo.com" />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="SeatNumber" class="form-label">Seleccionar Asiento *</label>
+                            <select asp-for="SeatNumber" class="form-select" required>
+                                <option value="">Seleccione un asiento</option>
+                                @foreach (var seat in availableSeats)
+                                {
+                                    <option value="@seat">Asiento @seat</option>
+                                }
+                            </select>
+                            <span asp-validation-for="SeatNumber" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="javascript:history.back()" class="btn btn-outline-secondary me-md-2">Atrás</a>
+                            <button type="submit" class="btn btn-success btn-lg">Continuar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}
