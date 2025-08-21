@@ -1,62 +1,104 @@
-﻿<!-- Views/Home/Index.cshtml - Búsqueda inicial -->
-@model TripSearchViewModel
+﻿@model TripSearchViewModel
 @{
-    ViewData["Title"] = "Buscar Viajes";
+    ViewData["Title"] = "Transport Agency - Viaja con Confianza";
 }
 
-<div class="hero-section text-center py-5 mb-5">
-    <div class="container">
-        <h1 class="display-4 mb-3">¡Viaja con Comodidad!</h1>
-        <p class="lead">Encuentra y reserva tu próximo viaje de manera fácil y segura</p>
-    </div>
-</div>
-
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card shadow">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0"><i class="fas fa-search me-2"></i>Buscar Viajes</h4>
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="hero-overlay"></div>
+    <div class="container position-relative">
+        <div class="row align-items-center min-vh-100 py-5">
+            <div class="col-lg-6">
+                <div class="hero-content">
+                    <h1 class="hero-title">
+                        Conectamos <span class="highlight-text">destinos</span>,
+                        <br>creamos <span class="highlight-text">experiencias</span>
+                    </h1>
+                    <p class="hero-subtitle">
+                        Más de 15 años llevando pasajeros por todo el Perú con seguridad,
+                        comodidad y puntualidad. Tu viaje perfecto nos espera.
+                    </p>
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <span class="stat-number">500K+</span>
+                            <span class="stat-label">Pasajeros felices</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">50+</span>
+                            <span class="stat-label">Destinos</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">99.8%</span>
+                            <span class="stat-label">Puntualidad</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body p-4">
-                    <form asp-action="SearchTrips" method="post">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="Origin" class="form-label">Ciudad de Origen</label>
-                                <select asp-for="Origin" class="form-select" required>
-                                    <option value="">Seleccione origen</option>
+            </div>
+            <div class="col-lg-6">
+                <div class="search-card">
+                    <div class="search-header">
+                        <h3><i class="fas fa-search me-2"></i>Encuentra tu viaje ideal</h3>
+                        <p>Busca entre más de 200 rutas diarias</p>
+                    </div>
+                    <form asp-action="SearchTrips" method="post" class="search-form" novalidate>
+                        <div class="form-group">
+                            <label asp-for="Origin" class="form-label">
+                                <i class="fas fa-map-marker-alt"></i>
+                                Origen
+                            </label>
+                            <div class="custom-select-wrapper">
+                                <select asp-for="Origin" class="custom-select" required>
+                                    <option value="">¿Desde dónde viajas?</option>
                                     @foreach (var city in ViewBag.Cities as List<string>)
                                     {
                                         <option value="@city">@city</option>
                                     }
                                 </select>
-                                <span asp-validation-for="Origin" class="text-danger"></span>
+                                <i class="fas fa-chevron-down select-icon"></i>
                             </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="Destination" class="form-label">Ciudad de Destino</label>
-                                <select asp-for="Destination" class="form-select" required>
-                                    <option value="">Seleccione destino</option>
-                                    @foreach (var city in ViewBag.Cities as List<string>)
-                                    {
-                                        <option value="@city">@city</option>
-                                    }
-                                </select>
-                                <span asp-validation-for="Destination" class="text-danger"></span>
-                            </div>
+                            <span asp-validation-for="Origin" class="error-message"></span>
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="TravelDate" class="form-label">Fecha de Viaje</label>
-                                <input asp-for="TravelDate" type="date" class="form-control" min="@DateTime.Today.ToString("yyyy-MM-dd")" required />
-                                <span asp-validation-for="TravelDate" class="text-danger"></span>
+                        <div class="form-group">
+                            <label asp-for="Destination" class="form-label">
+                                <i class="fas fa-flag-checkered"></i>
+                                Destino
+                            </label>
+                            <div class="custom-select-wrapper">
+                                <select asp-for="Destination" class="custom-select" required>
+                                    <option value="">¿A dónde quieres ir?</option>
+                                    @foreach (var city in ViewBag.Cities as List<string>)
+                                    {
+                                        <option value="@city">@city</option>
+                                    }
+                                </select>
+                                <i class="fas fa-chevron-down select-icon"></i>
                             </div>
+                            <span asp-validation-for="Destination" class="error-message"></span>
+                        </div>
 
-                            <div class="col-md-6 mb-3 d-flex align-items-end">
-                                <button type="submit" class="btn btn-primary btn-lg w-100">
-                                    <i class="fas fa-search me-2"></i>Buscar Viajes
-                                </button>
+                        <div class="form-group">
+                            <label asp-for="TravelDate" class="form-label">
+                                <i class="fas fa-calendar-alt"></i>
+                                Fecha de viaje
+                            </label>
+                            <input asp-for="TravelDate" type="date" class="custom-input"
+                                   min="@DateTime.Today.ToString("yyyy-MM-dd")" required />
+                            <span asp-validation-for="TravelDate" class="error-message"></span>
+                        </div>
+
+                        <button type="submit" class="btn-primary-custom btn-block">
+                            <i class="fas fa-search me-2"></i>
+                            Buscar viajes
+                            <span class="btn-overlay"></span>
+                        </button>
+
+                        <div class="quick-routes">
+                            <small class="text-muted">Rutas populares:</small>
+                            <div class="route-tags">
+                                <span class="route-tag" onclick="selectRoute('Lima', 'Arequipa')">Lima - Arequipa</span>
+                                <span class="route-tag" onclick="selectRoute('Lima', 'Cusco')">Lima - Cusco</span>
+                                <span class="route-tag" onclick="selectRoute('Lima', 'Trujillo')">Lima - Trujillo</span>
                             </div>
                         </div>
                     </form>
@@ -64,53 +106,403 @@
             </div>
         </div>
     </div>
+    <div class="hero-scroll-indicator">
+        <i class="fas fa-chevron-down"></i>
+    </div>
+</section>
 
-    <!-- Información adicional -->
-    <div class="row mt-5">
-        <div class="col-md-4 text-center mb-4">
-            <div class="card h-100">
-                <div class="card-body">
-                    <i class="fas fa-shield-alt fa-3x text-primary mb-3"></i>
-                    <h5>Viajes Seguros</h5>
-                    <p>Buses modernos con todas las medidas de seguridad</p>
+<!-- Features Section -->
+<section class="features-section">
+    <div class="container">
+        <div class="section-header text-center">
+            <h2>¿Por qué elegir Transport Agency?</h2>
+            <p>Más de una década de experiencia nos respalda</p>
+        </div>
+        <div class="row">
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h4>Seguridad Garantizada</h4>
+                    <p>Flota moderna con tecnología GPS, conductores certificados y mantenimiento preventivo constante.</p>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check"></i> Monitoreo 24/7</li>
+                        <li><i class="fas fa-check"></i> Conductores con más de 5 años de experiencia</li>
+                        <li><i class="fas fa-check"></i> Seguros de viaje incluidos</li>
+                    </ul>
                 </div>
             </div>
-        </div>
-        <div class="col-md-4 text-center mb-4">
-            <div class="card h-100">
-                <div class="card-body">
-                    <i class="fas fa-clock fa-3x text-success mb-3"></i>
-                    <h5>Puntualidad</h5>
-                    <p>Salidas puntuales y horarios garantizados</p>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h4>Puntualidad Excepcional</h4>
+                    <p>99.8% de puntualidad en salidas. Planifica tu tiempo con total confianza.</p>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check"></i> Salidas cada 30 minutos</li>
+                        <li><i class="fas fa-check"></i> Avisos en tiempo real</li>
+                        <li><i class="fas fa-check"></i> Garantía de horarios</li>
+                    </ul>
                 </div>
             </div>
-        </div>
-        <div class="col-md-4 text-center mb-4">
-            <div class="card h-100">
-                <div class="card-body">
-                    <i class="fas fa-heart fa-3x text-danger mb-3"></i>
-                    <h5>Comodidad</h5>
-                    <p>Asientos cómodos para un viaje placentero</p>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h4>Comodidad Premium</h4>
+                    <p>Asientos ergonómicos, WiFi gratuito, entretenimiento a bordo y snacks incluidos.</p>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check"></i> Asientos reclinables 160°</li>
+                        <li><i class="fas fa-check"></i> WiFi de alta velocidad</li>
+                        <li><i class="fas fa-check"></i> Cargadores USB en cada asiento</li>
+                    </ul>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
+
+<!-- Routes Section -->
+<section class="routes-section">
+    <div class="container">
+        <div class="section-header text-center">
+            <h2>Destinos Populares</h2>
+            <p>Conectamos las principales ciudades del Perú</p>
+        </div>
+        <div class="routes-grid">
+            <div class="route-card">
+                <div class="route-image">
+                    <img src="https://via.placeholder.com/400x250/2C5F41/FFFFFF?text=Lima" alt="Lima">
+                    <div class="route-overlay">
+                        <h4>Lima</h4>
+                        <p>Capital gastronómica</p>
+                    </div>
+                </div>
+                <div class="route-info">
+                    <div class="route-details">
+                        <span class="route-frequency">15 salidas diarias</span>
+                        <span class="route-price">Desde S/ 45</span>
+                    </div>
+                </div>
+            </div>
+            <div class="route-card">
+                <div class="route-image">
+                    <img src="https://via.placeholder.com/400x250/8B4513/FFFFFF?text=Cusco" alt="Cusco">
+                    <div class="route-overlay">
+                        <h4>Cusco</h4>
+                        <p>Ciudad imperial</p>
+                    </div>
+                </div>
+                <div class="route-info">
+                    <div class="route-details">
+                        <span class="route-frequency">8 salidas diarias</span>
+                        <span class="route-price">Desde S/ 90</span>
+                    </div>
+                </div>
+            </div>
+            <div class="route-card">
+                <div class="route-image">
+                    <img src="https://via.placeholder.com/400x250/CD853F/FFFFFF?text=Arequipa" alt="Arequipa">
+                    <div class="route-overlay">
+                        <h4>Arequipa</h4>
+                        <p>Ciudad blanca</p>
+                    </div>
+                </div>
+                <div class="route-info">
+                    <div class="route-details">
+                        <span class="route-frequency">12 salidas diarias</span>
+                        <span class="route-price">Desde S/ 80</span>
+                    </div>
+                </div>
+            </div>
+            <div class="route-card">
+                <div class="route-image">
+                    <img src="https://via.placeholder.com/400x250/4682B4/FFFFFF?text=Trujillo" alt="Trujillo">
+                    <div class="route-overlay">
+                        <h4>Trujillo</h4>
+                        <p>Capital de la primavera</p>
+                    </div>
+                </div>
+                <div class="route-info">
+                    <div class="route-details">
+                        <span class="route-frequency">10 salidas diarias</span>
+                        <span class="route-price">Desde S/ 50</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Services Section -->
+<section class="services-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <div class="services-content">
+                    <h2>Servicios que marcan la diferencia</h2>
+                    <p class="lead">Cada detalle pensado para tu comodidad y tranquilidad</p>
+
+                    <div class="service-item">
+                        <div class="service-icon">
+                            <i class="fas fa-wifi"></i>
+                        </div>
+                        <div class="service-content">
+                            <h5>WiFi Gratuito de Alta Velocidad</h5>
+                            <p>Mantente conectado durante todo tu viaje con nuestra red WiFi premium.</p>
+                        </div>
+                    </div>
+
+                    <div class="service-item">
+                        <div class="service-icon">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+                        <div class="service-content">
+                            <h5>Snacks y Bebidas Incluidas</h5>
+                            <p>Disfruta de snacks saludables y bebidas refrescantes sin costo adicional.</p>
+                        </div>
+                    </div>
+
+                    <div class="service-item">
+                        <div class="service-icon">
+                            <i class="fas fa-tv"></i>
+                        </div>
+                        <div class="service-content">
+                            <h5>Entertainment a Bordo</h5>
+                            <p>Pantallas individuales con películas, música y juegos para amenizar tu viaje.</p>
+                        </div>
+                    </div>
+
+                    <div class="service-item">
+                        <div class="service-icon">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <div class="service-content">
+                            <h5>Soporte 24/7</h5>
+                            <p>Asistencia personalizada antes, durante y después de tu viaje.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="services-visual">
+                    <div class="bus-mockup">
+                        <img src="https://via.placeholder.com/600x400/2C5F41/FFFFFF?text=Bus+Premium" alt="Bus Premium" class="img-fluid rounded">
+                        <div class="floating-feature feature-1">
+                            <i class="fas fa-wifi"></i>
+                            <span>WiFi Premium</span>
+                        </div>
+                        <div class="floating-feature feature-2">
+                            <i class="fas fa-charging-station"></i>
+                            <span>Carga USB</span>
+                        </div>
+                        <div class="floating-feature feature-3">
+                            <i class="fas fa-air-freshener"></i>
+                            <span>A/C Clima</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="testimonials-section">
+    <div class="container">
+        <div class="section-header text-center">
+            <h2>Lo que dicen nuestros pasajeros</h2>
+            <p>Más de 500,000 viajeros nos recomiendan</p>
+        </div>
+        <div class="testimonials-slider">
+            <div class="testimonial-card">
+                <div class="testimonial-content">
+                    <div class="stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p>"Excelente servicio. Los buses son cómodos, puntuales y el personal muy amable. Definitivamente mi primera opción para viajar."</p>
+                    <div class="testimonial-author">
+                        <img src="https://via.placeholder.com/60x60/4A90E2/FFFFFF?text=M" alt="Maria">
+                        <div class="author-info">
+                            <h5>María González</h5>
+                            <span>Viajera frecuente</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-content">
+                    <div class="stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p>"La puntualidad es impresionante. Nunca he tenido retrasos y la comodidad de los asientos hace que el viaje sea muy placentero."</p>
+                    <div class="testimonial-author">
+                        <img src="https://via.placeholder.com/60x60/50C878/FFFFFF?text=C" alt="Carlos">
+                        <div class="author-info">
+                            <h5>Carlos Mendoza</h5>
+                            <span>Empresario</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-content">
+                    <div class="stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p>"Viajo por trabajo constantemente y Transport Agency siempre cumple. WiFi rápido, asientos cómodos y excelente atención."</p>
+                    <div class="testimonial-author">
+                        <img src="https://via.placeholder.com/60x60/FF6B6B/FFFFFF?text=A" alt="Ana">
+                        <div class="author-info">
+                            <h5>Ana Rodríguez</h5>
+                            <span>Consultora</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-number" data-target="500000">0</div>
+                    <div class="stat-label">Pasajeros Transportados</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-map-marked-alt"></i>
+                    </div>
+                    <div class="stat-number" data-target="50">0</div>
+                    <div class="stat-label">Destinos Conectados</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-bus"></i>
+                    </div>
+                    <div class="stat-number" data-target="120">0</div>
+                    <div class="stat-label">Buses en Operación</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-award"></i>
+                    </div>
+                    <div class="stat-number" data-target="15">0</div>
+                    <div class="stat-label">Años de Experiencia</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-content text-center">
+            <h2>¿Listo para tu próximo viaje?</h2>
+            <p>Únete a miles de viajeros que confían en nosotros cada día</p>
+            <a href="#search-form" class="btn-secondary-custom">
+                <i class="fas fa-ticket-alt me-2"></i>
+                Reservar ahora
+            </a>
+        </div>
+    </div>
+</section>
 
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
     <script>
-        $(document).ready(function() {
-            // Validar que origen y destino sean diferentes
-            $('select[name="Origin"], select[name="Destination"]').change(function() {
-                var origin = $('select[name="Origin"]').val();
-                var destination = $('select[name="Destination"]').val();
+        // Función para seleccionar rutas rápidas
+        function selectRoute(origin, destination) {
+            document.querySelector('select[name="Origin"]').value = origin;
+            document.querySelector('select[name="Destination"]').value = destination;
 
-                if (origin && destination && origin === destination) {
-                    alert('El origen y destino deben ser diferentes');
-                    $(this).val('');
+            // Trigger change events para validación
+            document.querySelector('select[name="Origin"]').dispatchEvent(new Event('change'));
+            document.querySelector('select[name="Destination"]').dispatchEvent(new Event('change'));
+        }
+
+        // Smooth scroll para el botón CTA
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href').replace('#', '.'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
                 }
             });
         });
+
+        // Contador animado para las estadísticas
+        function animateCounters() {
+            const counters = document.querySelectorAll('.stat-number[data-target]');
+
+            counters.forEach(counter => {
+                const target = parseInt(counter.getAttribute('data-target'));
+                const duration = 2000; // 2 segundos
+                const increment = target / (duration / 16); // 60 FPS
+                let current = 0;
+
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        current = target;
+                        clearInterval(timer);
+                    }
+
+                    if (target >= 1000) {
+                        counter.textContent = Math.floor(current).toLocaleString() + (target >= 1000000 ? 'M+' : 'K+');
+                    } else {
+                        counter.textContent = Math.floor(current);
+                    }
+                }, 16);
+            });
+        }
+
+        // Iniciar contador cuando sea visible
+        const statsSection = document.querySelector('.stats-section');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateCounters();
+                    observer.unobserve(entry.target);
+                }
+            });
+        });
+
+        if (statsSection) {
+            observer.observe(statsSection);
+        }
     </script>
 }

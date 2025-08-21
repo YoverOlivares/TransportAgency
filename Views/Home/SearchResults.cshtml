@@ -1,5 +1,4 @@
-﻿<!-- Views/Home/SearchResults.cshtml - Resultados de búsqueda -->
-@model List<AvailableTripViewModel>
+﻿@model List<AvailableTripViewModel>
 @{
     ViewData["Title"] = "Viajes Disponibles";
     var searchData = ViewBag.SearchData as TripSearchViewModel;
@@ -8,65 +7,181 @@
 <div class="container">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h2>Viajes Disponibles</h2>
-            <p class="text-muted mb-0">
-                @searchData.Origin → @searchData.Destination | @searchData.TravelDate.ToString("dd/MM/yyyy")
+            <h2 class="fw-bold">
+                <i class="fas fa-route me-2" style="color: var(--color-primary);"></i>
+                Viajes Disponibles
+            </h2>
+            <p class="text-muted mb-0 fs-5">
+                <i class="fas fa-map-marker-alt me-1"></i>
+                @searchData.Origin
+                <i class="fas fa-arrow-right mx-2" style="color: var(--color-primary);"></i>
+                @searchData.Destination
+                <span class="mx-2">|</span>
+                <i class="fas fa-calendar-alt me-1"></i>
+                @searchData.TravelDate.ToString("dd/MM/yyyy")
             </p>
         </div>
-        <a href="@Url.Action("Index")" class="btn btn-outline-secondary">
+        <a href="@Url.Action("Index")" class="btn btn-outline-primary">
             <i class="fas fa-arrow-left me-1"></i>Nueva Búsqueda
         </a>
     </div>
 
-    <div class="row">
-        @foreach (var trip in Model)
-        {
-            <div class="col-12 mb-3">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col-md-3">
-                                <h5 class="mb-1">@trip.DepartureTime</h5>
-                                <small class="text-muted">Salida</small>
-                                <hr class="my-2">
-                                <h5 class="mb-1">@trip.ArrivalTime</h5>
-                                <small class="text-muted">Llegada</small>
-                            </div>
+    @if (Model.Any())
+    {
+        <div class="row">
+            @foreach (var trip in Model)
+            {
+                <div class="col-12 mb-4">
+                    <div class="card border-0 shadow">
+                        <div class="card-body p-4">
+                            <div class="row align-items-center">
+                                <!-- Horarios -->
+                                <div class="col-lg-2 col-md-3 text-center mb-3 mb-md-0">
+                                    <div class="d-flex flex-column">
+                                        <div class="mb-2">
+                                            <h4 class="fw-bold mb-1" style="color: var(--color-primary);">@trip.DepartureTime</h4>
+                                            <small class="text-muted">
+                                                <i class="fas fa-plane-departure me-1"></i>Salida
+                                            </small>
+                                        </div>
+                                        <div class="my-2">
+                                            <i class="fas fa-arrow-down" style="color: var(--color-accent);"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="fw-bold mb-1" style="color: var(--color-primary);">@trip.ArrivalTime</h4>
+                                            <small class="text-muted">
+                                                <i class="fas fa-plane-arrival me-1"></i>Llegada
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
 
-                            <div class="col-md-2 text-center">
-                                <p class="mb-1"><strong>@trip.Duration</strong></p>
-                                <small class="text-muted">Duración</small>
-                            </div>
+                                <!-- Duración -->
+                                <div class="col-lg-2 col-md-3 text-center mb-3 mb-md-0">
+                                    <div class="feature-item">
+                                        <i class="fas fa-clock fa-2x mb-2" style="color: var(--color-accent);"></i>
+                                        <h5 class="fw-bold mb-1">@trip.Duration</h5>
+                                        <small class="text-muted">Duración</small>
+                                    </div>
+                                </div>
 
-                            <div class="col-md-2">
-                                <p class="mb-1"><strong>@trip.BusType</strong></p>
-                                <small class="text-muted">Tipo de Bus</small>
-                            </div>
+                                <!-- Tipo de Bus -->
+                                <div class="col-lg-2 col-md-3 text-center mb-3 mb-md-0">
+                                    <div class="feature-item">
+                                        <i class="fas fa-bus fa-2x mb-2" style="color: var(--color-primary);"></i>
+                                        <h5 class="fw-bold mb-1">@trip.BusType</h5>
+                                        <small class="text-muted">Tipo de Bus</small>
+                                    </div>
+                                </div>
 
-                            <div class="col-md-2">
-                                <p class="mb-1"><strong>@trip.AvailableSeats asientos</strong></p>
-                                <small class="text-muted">Disponibles</small>
-                            </div>
+                                <!-- Asientos -->
+                                <div class="col-lg-2 col-md-3 text-center mb-3 mb-md-0">
+                                    <div class="feature-item">
+                                        <i class="fas fa-chair fa-2x mb-2" style="color: var(--color-accent);"></i>
+                                        <h5 class="fw-bold mb-1">@trip.AvailableSeats</h5>
+                                        <small class="text-muted">Asientos disponibles</small>
+                                    </div>
+                                </div>
 
-                            <div class="col-md-2">
-                                <h4 class="text-success mb-2">@trip.PriceFormatted</h4>
-                                <a href="@Url.Action("SelectSeat", new {
-                                    origin = trip.Origin,
-                                    destination = trip.Destination,
-                                    travelDate = trip.TravelDate.ToString("yyyy-MM-dd"),
-                                    departureTime = trip.DepartureTime,
-                                    arrivalTime = trip.ArrivalTime,
-                                    price = trip.Price,
-                                    duration = trip.Duration,
-                                    busType = trip.BusType
-                                })" class="btn btn-primary w-100">
-                                    Seleccionar
-                                </a>
+                                <!-- Precio y Botón -->
+                                <div class="col-lg-4 col-md-12 text-center">
+                                    <div class="price-section">
+                                        <h3 class="fw-bold mb-3 text-success">@trip.PriceFormatted</h3>
+                                        <a href="@Url.Action("SelectSeat", new {
+                                            origin = trip.Origin,
+                                            destination = trip.Destination,
+                                            travelDate = trip.TravelDate.ToString("yyyy-MM-dd"),
+                                            departureTime = trip.DepartureTime,
+                                            arrivalTime = trip.ArrivalTime,
+                                            price = trip.Price,
+                                            duration = trip.Duration,
+                                            busType = trip.BusType
+                                        })" class="btn btn-primary btn-lg w-100">
+                                            <i class="fas fa-ticket-alt me-2"></i>Seleccionar Viaje
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Información adicional -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="card border-0" style="background: rgba(197, 167, 80, 0.1);">
+                    <div class="card-body text-center p-4">
+                        <h5 class="fw-bold mb-3">
+                            <i class="fas fa-info-circle me-2" style="color: var(--color-primary);"></i>
+                            Información Importante
+                        </h5>
+                        <div class="row">
+                            <div class="col-md-4 mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>
+                                    Llegue 30 minutos antes
+                                </small>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-id-card me-1"></i>
+                                    Presente su documento
+                                </small>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-phone me-1"></i>
+                                    Soporte: +51 123 456 789
+                                </small>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        }
-    </div>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-12">
+                <div class="card border-0 text-center">
+                    <div class="card-body py-5">
+                        <i class="fas fa-search fa-4x mb-4" style="color: var(--color-muted);"></i>
+                        <h3 class="fw-bold mb-3">No se encontraron viajes</h3>
+                        <p class="text-muted mb-4">
+                            No hay viajes disponibles para la ruta <strong>@searchData.Origin → @searchData.Destination</strong>
+                            en la fecha <strong>@searchData.TravelDate.ToString("dd/MM/yyyy")</strong>
+                        </p>
+                        <div class="d-flex gap-3 justify-content-center flex-wrap">
+                            <a href="@Url.Action("Index")" class="btn btn-primary">
+                                <i class="fas fa-arrow-left me-2"></i>Buscar Otras Rutas
+                            </a>
+                            <button type="button" class="btn btn-outline-primary" onclick="history.back()">
+                                <i class="fas fa-edit me-2"></i>Modificar Búsqueda
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
 </div>
+
+<style>
+    .feature-item {
+        transition: transform 0.2s ease;
+    }
+
+        .feature-item:hover {
+            transform: translateY(-2px);
+        }
+
+    .price-section {
+        border-left: 3px solid var(--color-primary);
+        padding-left: 1rem;
+    }
+
+   
+</style>

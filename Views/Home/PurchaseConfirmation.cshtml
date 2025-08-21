@@ -1,75 +1,242 @@
-﻿<!-- Views/Home/PurchaseConfirmation.cshtml - Confirmación final -->
-@model ConfirmationViewModel
+﻿@model ConfirmationViewModel
 @{
     ViewData["Title"] = "Compra Exitosa";
 }
 
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card">
-                <div class="card-header bg-success text-white text-center">
-                    <h3><i class="fas fa-check-circle me-2"></i>¡Compra Exitosa!</h3>
+        <div class="col-lg-10">
+            <!-- Header de confirmación -->
+            <div class="text-center mb-4">
+                <div class="success-icon mb-3">
+                    <i class="fas fa-check-circle fa-4x text-success"></i>
                 </div>
-                <div class="card-body">
-                    <div class="text-center mb-4">
-                        <h4>Boleto N°: <span class="text-primary">@Model.TicketNumber</span></h4>
-                        <p class="text-muted">Fecha de compra: @Model.PurchaseDateFormatted</p>
-                    </div>
+                <h2 class="fw-bold text-success mb-2">¡Compra Exitosa!</h2>
+                <p class="text-muted fs-5">Tu boleto ha sido generado correctamente</p>
+            </div>
 
+            <!-- Información del boleto -->
+            <div class="card border-0 shadow-lg mb-4">
+                <div class="card-header text-center py-4">
+                    <h3 class="mb-2">
+                        <i class="fas fa-ticket-alt me-2" style="color: var(--color-primary);"></i>
+                        Boleto de Viaje
+                    </h3>
+                    <h4 class="fw-bold" style="color: var(--color-primary);">N° @Model.TicketNumber</h4>
+                    <p class="text-muted mb-0">
+                        <i class="fas fa-calendar me-1"></i>
+                        Fecha de compra: @Model.PurchaseDateFormatted
+                    </p>
+                </div>
+                <div class="card-body p-4">
                     <div class="row">
-                        <div class="col-md-6">
-                            <h5>Información del Pasajero</h5>
-                            <table class="table table-borderless">
-                                <tr><td><strong>Nombre:</strong></td><td>@Model.PassengerName</td></tr>
-                                <tr><td><strong>Documento:</strong></td><td>@Model.DocumentNumber</td></tr>
+                        <!-- Información del Pasajero -->
+                        <div class="col-md-6 mb-4">
+                            <h5 class="fw-bold mb-3">
+                                <i class="fas fa-user me-2" style="color: var(--color-primary);"></i>
+                                Información del Pasajero
+                            </h5>
+                            <div class="info-section">
+                                <div class="info-item">
+                                    <strong>Nombre:</strong>
+                                    <span>@Model.PassengerName</span>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Documento:</strong>
+                                    <span>@Model.DocumentNumber</span>
+                                </div>
                                 @if (!string.IsNullOrEmpty(Model.Phone))
                                 {
-                                    <tr><td><strong>Teléfono:</strong></td><td>@Model.Phone</td></tr>
+                                    <div class="info-item">
+                                        <strong>Teléfono:</strong>
+                                        <span>@Model.Phone</span>
+                                    </div>
                                 }
                                 @if (!string.IsNullOrEmpty(Model.Email))
                                 {
-                                    <tr><td><strong>Email:</strong></td><td>@Model.Email</td></tr>
+                                    <div class="info-item">
+                                        <strong>Email:</strong>
+                                        <span>@Model.Email</span>
+                                    </div>
                                 }
-                            </table>
+                            </div>
                         </div>
 
-                        <div class="col-md-6">
-                            <h5>Información del Viaje</h5>
-                            <table class="table table-borderless">
-                                <tr><td><strong>Ruta:</strong></td><td>@Model.RouteInfo</td></tr>
-                                <tr><td><strong>Fecha:</strong></td><td>@Model.TravelDateFormatted</td></tr>
-                                <tr><td><strong>Salida:</strong></td><td>@Model.DepartureTime</td></tr>
-                                <tr><td><strong>Llegada:</strong></td><td>@Model.ArrivalTime</td></tr>
-                                <tr><td><strong>Asiento:</strong></td><td>@Model.SeatNumber</td></tr>
-                                <tr><td><strong>Precio:</strong></td><td><strong class="text-success">@Model.PriceFormatted</strong></td></tr>
-                            </table>
+                        <!-- Información del Viaje -->
+                        <div class="col-md-6 mb-4">
+                            <h5 class="fw-bold mb-3">
+                                <i class="fas fa-route me-2" style="color: var(--color-primary);"></i>
+                                Información del Viaje
+                            </h5>
+                            <div class="info-section">
+                                <div class="info-item">
+                                    <strong>Ruta:</strong>
+                                    <span class="route-display">@Model.RouteInfo</span>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Fecha:</strong>
+                                    <span>@Model.TravelDateFormatted</span>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Salida:</strong>
+                                    <span class="fw-bold text-success">@Model.DepartureTime</span>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Llegada:</strong>
+                                    <span class="fw-bold text-info">@Model.ArrivalTime</span>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Asiento:</strong>
+                                    <span class="badge fs-6" style="background: var(--color-primary); color: white;">
+                                        @Model.SeatNumber
+                                    </span>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Duración:</strong>
+                                    <span>@Model.Duration</span>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Tipo de Bus:</strong>
+                                    <span>@Model.BusType</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <hr>
-
-                    <div class="alert alert-info">
-                        <h6><i class="fas fa-info-circle me-2"></i>Instrucciones importantes:</h6>
-                        <ul class="mb-0">
-                            <li>Llegue al terminal 30 minutos antes de la salida</li>
-                            <li>Presente su documento de identidad junto con el boleto</li>
-                            <li>Conserve este boleto durante todo el viaje</li>
-                            <li>En caso de dudas, comuníquese con nosotros</li>
-                        </ul>
+                    <!-- Precio total destacado -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="price-highlight text-center p-4 rounded"
+                                 style="background: linear-gradient(135deg, rgba(40, 167, 69, 0.1) 0%, rgba(32, 201, 151, 0.1) 100%); border: 2px solid #28a745;">
+                                <h3 class="fw-bold text-success mb-0">
+                                    <i class="fas fa-dollar-sign me-2"></i>
+                                    Total Pagado: @Model.PriceFormatted
+                                </h3>
+                            </div>
+                        </div>
                     </div>
+                </div>
+            </div>
 
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-center">
-                        <a href="@Url.Action("DownloadPdf", "Ticket", new { id = Model.SaleId })"
-                           class="btn btn-primary btn-lg me-md-2">
-                            <i class="fas fa-download me-2"></i>Descargar PDF
-                        </a>
-                        <a href="@Url.Action("Index")" class="btn btn-outline-success btn-lg">
-                            <i class="fas fa-home me-2"></i>Volver al Inicio
-                        </a>
+            <!-- Instrucciones importantes -->
+            <div class="card border-0 mb-4" style="background: rgba(197, 167, 80, 0.1); border: 1px solid rgba(197, 167, 80, 0.3) !important;">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3">
+                        <i class="fas fa-exclamation-triangle me-2" style="color: var(--color-primary);"></i>
+                        Instrucciones Importantes
+                    </h5>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="instruction-item">
+                                <i class="fas fa-clock me-2 text-warning"></i>
+                                <strong>Llegue 30 minutos antes</strong> de la hora de salida al terminal
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="instruction-item">
+                                <i class="fas fa-id-card me-2 text-info"></i>
+                                <strong>Present su documento</strong> de identidad junto con el boleto
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="instruction-item">
+                                <i class="fas fa-ticket-alt me-2 text-success"></i>
+                                <strong>Conserve este boleto</strong> durante todo el viaje
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="instruction-item">
+                                <i class="fas fa-phone me-2" style="color: var(--color-primary);"></i>
+                                <strong>Soporte:</strong> +51 123 456 789 para consultas
+                            </div>
+                        </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="text-center">
+                <div class="d-flex gap-3 justify-content-center flex-wrap">
+                    <a href="@Url.Action("DownloadPdf", "Ticket", new { id = Model.SaleId })"
+                       class="btn btn-primary btn-lg">
+                        <i class="fas fa-download me-2"></i>Descargar PDF
+                    </a>
+                    <a href="@Url.Action("Index")" class="btn btn-outline-success btn-lg">
+                        <i class="fas fa-home me-2"></i>Volver al Inicio
+                    </a>
+                    <button type="button" class="btn btn-outline-primary btn-lg" onclick="window.print()">
+                        <i class="fas fa-print me-2"></i>Imprimir
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mensaje de agradecimiento -->
+            <div class="text-center mt-5 mb-4">
+                <div class="p-4 rounded" style="background: rgba(132, 76, 68, 0.1);">
+                    <h4 class="fw-bold mb-2" style="color: var(--color-accent);">
+                        <i class="fas fa-heart me-2"></i>¡Gracias por elegir Transport Agency!
+                    </h4>
+                    <p class="text-muted mb-0">
+                        Esperamos que tengas un viaje seguro y cómodo.
+                        ¡Te esperamos en tu próximo destino!
+                    </p>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    .success-icon {
+        animation: bounceIn 0.6s ease-out;
+    }
+
+    
+
+    .info-section {
+        background: rgba(248, 249, 250, 0.8);
+        border-radius: var(--border-radius);
+        padding: 1rem;
+    }
+
+    .info-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+    .route-display {
+        font-weight: 600;
+        color: var(--color-primary);
+    }
+
+    .instruction-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .price-highlight {
+        position: relative;
+        overflow: hidden;
+    }
+
+        .price-highlight::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+    
+</style>
